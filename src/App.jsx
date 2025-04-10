@@ -4,15 +4,28 @@ import Electronic from './Electronic'
 import Fashion from './Fashion'
 import Jewellery from './Jewellery'
 import PayPage from './PayPage'
+import CreationUser from './CreationUser'
 
 import { Link } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 
 
 
 function App() {
-  
+
+    const navigate = useNavigate();
+    
+    const handleBuyNowClick = () => {
+        // Redirection vers la page de paiement
+        navigate('/paypage');
+    };
+    
+    const goToCreationUser = () => {
+        navigate('/CreationUser');
+    };
   return (
    
     <><div class="banner_bg_main">
@@ -94,7 +107,7 @@ function App() {
                   </li>
                   <li><a href="#">
                     <i class="fa fa-user" aria-hidden="true"></i>
-                    <span class="padding_10">Cart</span></a>
+                    <button onClick={goToCreationUser} >LOGIN</button></a>
                   </li>
                 </ul>
               </div>
@@ -126,7 +139,7 @@ function App() {
                 <div class="row">
                   <div class="col-sm-12">
                     <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                    <div class="buynow_bt"><Link to="/PayPage">Buy Now</Link></div>
+                    <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
                   </div>
                 </div>
               </div>
@@ -176,7 +189,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/women-clothes-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><Link to="/PayPage">Buy Now</Link></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -196,7 +209,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><Link to="/PayPage">Buy Now</Link></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -207,7 +220,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -218,7 +231,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="images/women-clothes-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -238,7 +251,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -249,7 +262,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -260,7 +273,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/women-clothes-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -291,7 +304,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -302,7 +315,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -313,7 +326,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -333,7 +346,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -344,7 +357,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -355,7 +368,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -375,7 +388,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -386,7 +399,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -397,7 +410,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -428,7 +441,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -439,7 +452,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -450,7 +463,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -470,7 +483,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -481,7 +494,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -492,7 +505,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -512,7 +525,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -523,7 +536,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -534,7 +547,7 @@ function App() {
                         <p class="price_text">Start Price  <span style={{color:" #262626;"}}>$ 100</span></p>
                         <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="#">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>

@@ -7,20 +7,22 @@ import  Jewellery from "./Jewellery"
 import  Fashion from "./Fashion"
 import  Electronic from "./Electronic"
 import  PayPage from "./PayPage"
+import CreationUser from './CreationUser'
 
-const App = lazy(()=> import("./App") )
+
 
 
 
 export default function RoutesComponent() {
   return (
-    <div>
+    <div> 
       <Routes>
       <Route path="/App" element={<App/>}></Route>
       <Route path="/Electronic" element={<Electronic/>}></Route>
       <Route path="/Fashion" element={<Fashion/>}></Route>
       <Route path="/Jewellery" element={<Jewellery/>}></Route>
       <Route path="/PayPage" element={<PayPage/>}></Route>
+      <Route path="/CreationUser" element={<CreationUser/>}></Route>
       <Route path="/*" element={<App/>}></Route>
       </Routes>
     </div>
