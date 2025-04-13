@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const UserForm = () => {
+
+const CreateUserForm = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    role: 'Client'
+    role: 'client'
   });
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,192 +21,146 @@ const UserForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Données soumises:', formData);
-    // Ici vous ajouteriez la logique pour envoyer les données au serveur
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/.test(formData.password)) {
+      newErrors.password = 'Password must include at least one lowercase, one uppercase, one number and one special character';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Styles intégrés
-  const styles = {
-    container: {
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      backgroundColor: '#f5f5f5',
-      margin: 0,
-      padding: 0,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh'
-    },
-    formContainer: {
-      width: '100%',
-      maxWidth: '500px',
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      padding: '2rem'
-    },
-    title: {
-      textAlign: 'center',
-      color: '#333',
-      marginBottom: '1.5rem',
-      fontWeight: '600'
-    },
-    form: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1.2rem'
-    },
-    formGroup: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.5rem'
-    },
-    label: {
-      fontWeight: '500',
-      color: '#555',
-      fontSize: '0.95rem'
-    },
-    requiredLabel: {
-      fontWeight: '500',
-      color: '#555',
-      fontSize: '0.95rem',
-      position: 'relative'
-    },
-    requiredStar: {
-      color: '#e74c3c',
-      marginLeft: '2px'
-    },
-    input: {
-      padding: '0.8rem',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '1rem',
-      transition: 'border-color 0.3s'
-    },
-    inputFocus: {
-      borderColor: '#4a90e2',
-      outline: 'none',
-      boxShadow: '0 0 0 2px rgba(74, 144, 226, 0.2)'
-    },
-    select: {
-      padding: '0.8rem',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '1rem',
-      transition: 'border-color 0.3s',
-      backgroundColor: 'white'
-    },
-    submitButton: {
-      backgroundColor: '#4a90e2',
-      color: 'white',
-      padding: '0.8rem',
-      border: 'none',
-      borderRadius: '4px',
-      fontSize: '1rem',
-      fontWeight: '500',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s',
-      marginTop: '1rem'
-    },
-    submitButtonHover: {
-      backgroundColor: '#3a7bc8'
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    try {
+      const response = await axios.post('http://localhost:3000/api/users', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      setSuccessMessage('User created successfully!');
+      setErrorMessage('');
+      // Reset form after successful submission
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        role: 'client'
+      });
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Error creating user');
+      setSuccessMessage('');
     }
   };
 
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
-    <div style={styles.container}>
-      <div style={styles.formContainer}>
-        <h2 style={styles.title}>Create New User</h2>
-        <form 
-          onSubmit={handleSubmit} 
-          style={styles.form}
-        >
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="username">Username (optional)</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              style={styles.input}
-              onFocus={(e) => e.target.style = {...styles.input, ...styles.inputFocus}}
-              onBlur={(e) => e.target.style = styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <div style={styles.requiredLabel}>
-              Email
-              <span style={styles.requiredStar}>*</span>
-            </div>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={styles.input}
-              onFocus={(e) => e.target.style = {...styles.input, ...styles.inputFocus}}
-              onBlur={(e) => e.target.style = styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <div style={styles.requiredLabel}>
-              Password
-              <span style={styles.requiredStar}>*</span>
-            </div>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              style={styles.input}
-              onFocus={(e) => e.target.style = {...styles.input, ...styles.inputFocus}}
-              onBlur={(e) => e.target.style = styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="role">Role</label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              style={styles.select}
-              onFocus={(e) => e.target.style = {...styles.select, ...styles.inputFocus}}
-              onBlur={(e) => e.target.style = styles.select}
-            >
-              <option value="Client">Client</option>
-              <option value="Admin">Admin</option>
-              <option value="Editor">Editor</option>
-            </select>
-          </div>
-
-          <button 
-            type="submit" 
-            style={{
-              ...styles.submitButton,
-              ...(isHovered ? styles.submitButtonHover : {})
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">Create New User</h2>
+      
+      {successMessage && (
+        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
+          {successMessage}
+        </div>
+      )}
+      
+      {errorMessage && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+          {errorMessage}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            Username (optional)
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email *
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+        </div>
+        
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password *
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+        </div>
+        
+        <div>
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+            Role
+          </label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="client">Client</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        
+        <div>
+          <button
+            type="submit"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Create User
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default UserForm;
+export default CreateUserForm;

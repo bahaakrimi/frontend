@@ -2,11 +2,19 @@ import App from './App'
 import Electronic from './Electronic'
 import Fashion from './Fashion'
 import { Form, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import PayPage from './PayPage'
 
 function Jewellery() {
+   const navigate = useNavigate();
+    
+   const handleBuyNowClick = () => {
+
+      // Redirection vers la page de paiement
+      navigate('/paypage');
+   };
     return (
       <>
-
       <div class="banner_bg_main">
          <div class="container">
             <div class="header_section_top">
@@ -100,7 +108,7 @@ function Jewellery() {
                         <div class="row">
                            <div class="col-sm-12">
                               <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                              <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                            </div>
                         </div>
                      </div>
@@ -108,7 +116,7 @@ function Jewellery() {
                         <div class="row">
                            <div class="col-sm-12">
                               <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                              <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                            </div>
                         </div>
                      </div>
@@ -116,7 +124,7 @@ function Jewellery() {
                         <div class="row">
                            <div class="col-sm-12">
                               <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                              <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                            </div>
                         </div>
                      </div>
@@ -145,7 +153,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -156,7 +164,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -167,7 +175,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -187,7 +195,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -198,7 +206,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -209,7 +217,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -229,7 +237,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -240,7 +248,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -251,7 +259,7 @@ function Jewellery() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>

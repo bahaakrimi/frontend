@@ -8,6 +8,7 @@ import  Fashion from "./Fashion"
 import  Electronic from "./Electronic"
 import  PayPage from "./PayPage"
 import CreationUser from './CreationUser'
+import LoginForm from './LoginForm'
 
 
 
@@ -23,6 +24,9 @@ export default function RoutesComponent() {
       <Route path="/Jewellery" element={<Jewellery/>}></Route>
       <Route path="/PayPage" element={<PayPage/>}></Route>
       <Route path="/CreationUser" element={<CreationUser/>}></Route>
+      <Route path="/LoginForm" element={<LoginForm/>}></Route>
+      
+      
       <Route path="/*" element={<App/>}></Route>
       </Routes>
     </div>

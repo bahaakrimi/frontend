@@ -5,6 +5,7 @@ import Fashion from './Fashion'
 import Jewellery from './Jewellery'
 import PayPage from './PayPage'
 import CreationUser from './CreationUser'
+import LoginForm from './LoginForm'
 
 import { Link } from 'react-router-dom';
 import React from 'react';
@@ -24,7 +25,7 @@ function App() {
     };
     
     const goToCreationUser = () => {
-        navigate('/CreationUser');
+        navigate('/LoginForm');
     };
   return (
    
@@ -167,7 +168,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="buy">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>
@@ -178,7 +179,7 @@ function App() {
                         <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
                         <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                         <div class="btn_main">
-                          <div class="buy_bt"><a href="buy">Buy Now</a></div>
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                           <div class="seemore_bt"><a href="#">See More</a></div>
                         </div>
                       </div>

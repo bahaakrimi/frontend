@@ -3,7 +3,20 @@ import App from './App'
 import Fashion from './Fashion'
 import Jewellery from './Jewellery'
 import { Form, Link } from 'react-router-dom';
+import PayPage from './PayPage'
+import { useNavigate } from 'react-router-dom';
+
+
 function Electronic() {
+   const navigate = useNavigate();
+    
+   const handleBuyNowClick = () => {
+
+      // Redirection vers la page de paiement
+      navigate('/paypage');
+   };
+   
+
     return (
         <>
         <div class="banner_bg_main">
@@ -99,7 +112,7 @@ function Electronic() {
                         <div class="row">
                            <div class="col-sm-12">
                               <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                              <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                            </div>
                         </div>
                      </div>
@@ -107,7 +120,7 @@ function Electronic() {
                         <div class="row">
                            <div class="col-sm-12">
                               <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                              <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                            </div>
                         </div>
                      </div>
@@ -115,7 +128,7 @@ function Electronic() {
                         <div class="row">
                            <div class="col-sm-12">
                               <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                              <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                              <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                            </div>
                         </div>
                      </div>
@@ -144,7 +157,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -155,7 +168,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -166,7 +179,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -186,7 +199,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -197,7 +210,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -208,7 +221,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -228,7 +241,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -239,7 +252,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
@@ -250,7 +263,7 @@ function Electronic() {
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
                                  <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
-                                    <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                    <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
                                  </div>
                               </div>
