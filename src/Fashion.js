@@ -5,9 +5,16 @@ import Jewellery from './Jewellery'
 import { Form, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import PayPage from './PayPage'
+import LoginForm from './LoginForm'
+import Sports from './Sports'
+import Jeux from './Jeux'
+
 
 function Fashion() {
    const navigate = useNavigate();
+   const goToCreationUser = () => {
+      navigate('/LoginForm');
+  };
     
    const handleBuyNowClick = () => {
 
@@ -24,10 +31,12 @@ function Fashion() {
                   <div class="col-sm-12">
                      <div class="custom_menu">
                         <ul>
-                          <li><Link to="/app">HOME</Link></li>
-                          <li><Link to="/Electronic">Electronic</Link></li>
-                          <li><Link to="/Fashion">Fashion</Link></li>
+                        <li><Link to="/app">HOME</Link></li>
+                         <li><Link to="/Electronic">Electronic</Link></li>
+                         <li><Link to="/Fashion">Fashion</Link></li>
                           <li><Link to="/Jewellery">Jewellery</Link></li>
+                          <li><Link to="/Sports">Sports</Link></li>
+                          <li><Link to="/Jeux">Jeux</Link></li>
                         </ul>
                      </div>
                   </div>
@@ -94,7 +103,7 @@ function Fashion() {
                            </li>
                            <li><a href="#">
                               <i class="fa fa-user" aria-hidden="true"></i>
-                              <span class="padding_10">Cart</span></a>
+                              <button onClick={goToCreationUser} >LOGIN</button></a>
                            </li>
                         </ul>
                      </div>

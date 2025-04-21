@@ -9,6 +9,10 @@ import  Electronic from "./Electronic"
 import  PayPage from "./PayPage"
 import CreationUser from './CreationUser'
 import LoginForm from './LoginForm'
+import Sports from './Sports'
+import Jeux from './Jeux'
+import Cmande from './Cmande'
+
 
 
 
@@ -24,6 +28,13 @@ export default function RoutesComponent() {
       <Route path="/Jewellery" element={<Jewellery/>}></Route>
       <Route path="/PayPage" element={<PayPage/>}></Route>
       <Route path="/CreationUser" element={<CreationUser/>}></Route>
+      <Route path="/Sports" element={<Sports/>}></Route>
+      <Route path="/Jeux" element={<Jeux/>}></Route>
+      <Route path="/Cmande" element={<Cmande/>}></Route>
+
+
+
+      
       <Route path="/LoginForm" element={<LoginForm/>}></Route>
       
       

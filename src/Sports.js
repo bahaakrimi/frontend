@@ -1,27 +1,34 @@
 import App from './App'
-import Electronic from './Electronic'
+
 import Fashion from './Fashion'
+import Jewellery from './Jewellery'
 import { Form, Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import PayPage from './PayPage'
+import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm'
-import Sports from './Sports'
 import Jeux from './Jeux'
 
-function Jewellery() {
+
+
+
+function Sports() {
    const navigate = useNavigate();
-   const goToCreationUser = () => {
-      navigate('/LoginForm');
-  };
+
+       
+       const goToCreationUser = () => {
+           navigate('/LoginForm');
+       };
     
    const handleBuyNowClick = () => {
 
       // Redirection vers la page de paiement
       navigate('/paypage');
    };
+   
+
     return (
-      <>
-      <div class="banner_bg_main">
+        <>
+        <div class="banner_bg_main">
          <div class="container">
             <div class="header_section_top">
                <div class="row">
@@ -73,7 +80,7 @@ function Jewellery() {
                      <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search this blog"/>
                         <div class="input-group-append">
-                           <button class="btn btn-secondary" type="button" style={{color: "#f26522;"}}>
+                           <button class="btn btn-secondary" type="button" style={{color:" #f26522;"}}  >
                            <i class="fa fa-search"></i>
                            </button>
                         </div>
@@ -147,19 +154,19 @@ function Jewellery() {
             </div>
          </div>
       </div>
-      <div class="jewellery_section">
-         <div id="jewellery_main_slider" class="carousel slide" data-ride="carousel">
+      <div class="fashion_section">
+         <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
                <div class="carousel-item active">
                   <div class="container">
-                     <h1 class="fashion_taital">Jewellery Accessories</h1>
+                     <h1 class="fashion_taital">Sports</h1>
                      <div class="fashion_section_2">
                         <div class="row">
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Jumkas</h4>
+                                 <h4 class="shirt_text">Foot Ball</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/foot.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -168,9 +175,9 @@ function Jewellery() {
                            </div>
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Necklaces</h4>
+                                 <h4 class="shirt_text">Raquettes</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/raquettes.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -179,9 +186,9 @@ function Jewellery() {
                            </div>
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Kangans</h4>
+                                 <h4 class="shirt_text">Hand Grip Des Mains</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/HandGripDesMains.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -194,14 +201,14 @@ function Jewellery() {
                </div>
                <div class="carousel-item">
                   <div class="container">
-                     <h1 class="fashion_taital">Jewellery Accessories</h1>
+                     <h1 class="fashion_taital">Electronic</h1>
                      <div class="fashion_section_2">
                         <div class="row">
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Jumkas</h4>
+                                 <h4 class="shirt_text">Laptop</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -210,9 +217,9 @@ function Jewellery() {
                            </div>
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Necklaces</h4>
+                                 <h4 class="shirt_text">Mobile</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -221,9 +228,9 @@ function Jewellery() {
                            </div>
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Kangans</h4>
+                                 <h4 class="shirt_text">Computers</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -236,14 +243,14 @@ function Jewellery() {
                </div>
                <div class="carousel-item">
                   <div class="container">
-                     <h1 class="fashion_taital">Jewellery Accessories</h1>
+                     <h1 class="fashion_taital">Sports</h1>
                      <div class="fashion_section_2">
                         <div class="row">
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Jumkas</h4>
+                                 <h4 class="shirt_text">Foot Ball</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/foot.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -252,9 +259,9 @@ function Jewellery() {
                            </div>
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Necklaces</h4>
+                                 <h4 class="shirt_text">HandGripDesMains</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/HandGripDesMains.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -263,9 +270,9 @@ function Jewellery() {
                            </div>
                            <div class="col-lg-4 col-sm-4">
                               <div class="box_main">
-                                 <h4 class="shirt_text">Kangans</h4>
+                                 <h4 class="shirt_text">Raquettes</h4>
                                  <p class="price_text">Start Price  <span style={{color: "#262626;"}}>$ 100</span></p>
-                                 <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
+                                 <div class="electronic_img"><img src="./assets/images/raquettes.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
                                     <div class="seemore_bt"><a href="#">See More</a></div>
@@ -277,17 +284,15 @@ function Jewellery() {
                   </div>
                </div>
             </div>
-            <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
+            <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
             <i class="fa fa-angle-left"></i>
             </a>
-            <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
+            <a class="carousel-control-next" href="#electronic_main_slider" role="button" data-slide="next">
             <i class="fa fa-angle-right"></i>
             </a>
-            <div class="loader_main">
-               <div class="loader"></div>
-            </div>
          </div>
       </div>
+
       <div class="footer_section layout_padding">
          <div class="container">
             <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
@@ -307,7 +312,6 @@ function Jewellery() {
             <div class="location_main">Help Line  Number : <a href="#">+1 1800 1200 1200</a></div>
          </div>
       </div>
-
       <div class="copyright_section">
          <div class="container">
             <p class="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
@@ -316,7 +320,9 @@ function Jewellery() {
       </>
 
 
+
+
     );
   }
-  export default Jewellery;
+  export default Sports;
   
