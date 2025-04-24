@@ -6,8 +6,9 @@ import { Form, Link } from 'react-router-dom';
 import PayPage from './PayPage'
 import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm'
-
-
+import Playstation from './Playstation'
+import  Nintendo from './Nintendo'
+import Xbox from './Xbox'
 
 function Jeux () {
    const navigate = useNavigate();
@@ -167,7 +168,7 @@ function Jeux () {
                                  <div class="electronic_img"><img src="./assets/images/playstation.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Playstation">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -178,7 +179,7 @@ function Jeux () {
                                  <div class="electronic_img"><img src="./assets/images/nintendo.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Nintendo">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -189,7 +190,7 @@ function Jeux () {
                                  <div class="electronic_img"><img src="./assets/images/xbox.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Xbox">see more</Link></div>
                                  </div>
                               </div>
                            </div>

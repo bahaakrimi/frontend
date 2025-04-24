@@ -8,6 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm'
 import Sports from './Sports'
 import Jeux from './Jeux'
+import Cart from './Cart'
+import Tel from './Tel'
+
 
 
 
@@ -169,7 +172,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Pc">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -180,7 +183,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Tel">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -191,7 +194,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Cart">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -211,7 +214,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Pc">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -222,7 +225,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Tel">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -233,7 +236,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Cart">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -253,7 +256,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Pc">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -264,7 +267,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Tel">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -275,7 +278,7 @@ function Electronic() {
                                  <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Cart">See More</Link></div>
                                  </div>
                               </div>
                            </div>

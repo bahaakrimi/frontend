@@ -7,6 +7,8 @@ import PayPage from './PayPage'
 import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm'
 import Jeux from './Jeux'
+import Foot from './Foot'
+import Raquettes from './Raquettes'
 
 
 
@@ -169,7 +171,7 @@ function Sports() {
                                  <div class="electronic_img"><img src="./assets/images/foot.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Foot">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -180,7 +182,7 @@ function Sports() {
                                  <div class="electronic_img"><img src="./assets/images/raquettes.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Raquettes">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -191,7 +193,7 @@ function Sports() {
                                  <div class="electronic_img"><img src="./assets/images/HandGripDesMains.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/HandGripDesMains">see more</Link></div>
                                  </div>
                               </div>
                            </div>

@@ -10,26 +10,19 @@ import Sports from './Sports'
 import Jeux from './Jeux'
 import Cmande   from './Cmande'
 
+import { CartContext } from './context/CartContext';
+import Panier from './Panier'
+import { CartProvider } from './context/CartContext';
 
 import { Link } from 'react-router-dom';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import  { useState } from 'react';
 
 
 
 
 
 function App() {
-  const [cart, setCart] = useState([]);
-
-  const addToCart = (product) => {
-    setCart([...cart, product]);
-  };
-
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
-  };
 
     const navigate = useNavigate();
     
@@ -121,9 +114,9 @@ function App() {
               </div>
               <div class="login_menu">
                 <ul>
-                  <li><a href="#">
+                  <li><Link to="Panier">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                    <span class="padding_10">Cart</span></a>
+                    <span class="padding_10">Cart</span></Link>
                   </li>
                   <li><a href="#">
                     <i class="fa fa-user" aria-hidden="true"></i>
@@ -188,7 +181,7 @@ function App() {
                         <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Tshirt2">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -199,7 +192,7 @@ function App() {
                         <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Tshirt">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -210,7 +203,7 @@ function App() {
                         <div class="tshirt_img"><img src="./assets/images/women-clothes-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Women">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -230,7 +223,7 @@ function App() {
                         <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Tshirt2">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -241,7 +234,7 @@ function App() {
                         <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Tshirt">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -252,7 +245,7 @@ function App() {
                         <div class="tshirt_img"><img src="images/women-clothes-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Women">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -326,7 +319,7 @@ function App() {
                         <div class="electronic_img"><img src="./assets/images/laptop-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Pc">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -337,7 +330,7 @@ function App() {
                         <div class="electronic_img"><img src="./assets/images/mobile-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Tel">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -348,7 +341,7 @@ function App() {
                         <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Cart">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -463,7 +456,7 @@ function App() {
                         <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Jhumka">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -474,7 +467,7 @@ function App() {
                         <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Neklesh">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -485,7 +478,7 @@ function App() {
                         <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                         <div class="btn_main">
                           <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                          <div class="seemore_bt"><a href="#">See More</a></div>
+                          <div class="seemore_bt"><Link to="/Kangan">See More</Link></div>
                         </div>
                       </div>
                     </div>
@@ -601,7 +594,7 @@ function App() {
                                  <div class="electronic_img"><img src="./assets/images/playstation.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Playstation">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -612,7 +605,7 @@ function App() {
                                  <div class="electronic_img"><img src="./assets/images/nintendo.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Nintendo">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -623,7 +616,7 @@ function App() {
                                  <div class="electronic_img"><img src="./assets/images/xbox.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Xbox">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -738,7 +731,7 @@ function App() {
                                  <div class="electronic_img"><img src="./assets/images/foot.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Foot">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -749,7 +742,7 @@ function App() {
                                  <div class="electronic_img"><img src="./assets/images/raquettes.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Raquettes">see more</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -760,7 +753,7 @@ function App() {
                                  <div class="electronic_img"><img src="./assets/images/HandGripDesMains.jpg"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/HandGripDesMains">see more</Link></div>
                                  </div>
                               </div>
                            </div>

@@ -8,6 +8,8 @@ import PayPage from './PayPage'
 import LoginForm from './LoginForm'
 import Sports from './Sports'
 import Jeux from './Jeux'
+import Tshirt from './Tshirt'
+import Women  from './Women '
 
 
 function Fashion() {
@@ -166,7 +168,7 @@ function Fashion() {
                                  <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Tshirt">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -177,7 +179,7 @@ function Fashion() {
                                  <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Tshirt">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -188,7 +190,7 @@ function Fashion() {
                                  <div class="tshirt_img"><img src="./assets/images/women-clothes-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Women">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -219,7 +221,7 @@ function Fashion() {
                                  <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to='/Tshirt'>See More</Link></div>
                                  </div>
                               </div>
                            </div>

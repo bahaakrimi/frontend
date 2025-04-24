@@ -7,6 +7,9 @@ import PayPage from './PayPage'
 import LoginForm from './LoginForm'
 import Sports from './Sports'
 import Jeux from './Jeux'
+import Jhumka from './Jhumka'
+import Neklesh from './Neklesh'
+import Kangan from './Kangan'
 
 function Jewellery() {
    const navigate = useNavigate();
@@ -162,7 +165,7 @@ function Jewellery() {
                                  <div class="jewellery_img"><img src="./assets/images/jhumka-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Jhumka">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -173,7 +176,7 @@ function Jewellery() {
                                  <div class="jewellery_img"><img src="./assets/images/neklesh-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Neklesh">See More</Link></div>
                                  </div>
                               </div>
                            </div>
@@ -184,7 +187,7 @@ function Jewellery() {
                                  <div class="jewellery_img"><img src="./assets/images/kangan-img.png"/></div>
                                  <div class="btn_main">
                                     <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                                    <div class="seemore_bt"><a href="#">See More</a></div>
+                                    <div class="seemore_bt"><Link to="/Kangan">See More</Link></div>
                                  </div>
                               </div>
                            </div>
