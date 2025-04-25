@@ -43,7 +43,7 @@ function App() {
             <div class="col-sm-12">
               <div class="custom_menu">
                 <ul>
-                  <li><Link to="/Cmande">Cmande</Link></li>
+             
                   <li><Link to="/app">HOME</Link></li>
                   <li><Link to="/Electronic">Electronic</Link></li>
                   <li><Link to="/Fashion">Fashion</Link></li>
@@ -82,8 +82,8 @@ function App() {
             </div>
             <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
             <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Category
-              </button>
+              <Link to="/Cmande"><button  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Command
+              </button></Link>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" href="#">Action</a>
                 <a class="dropdown-item" href="#">Another action</a>

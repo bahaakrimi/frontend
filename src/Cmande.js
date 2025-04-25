@@ -1,49 +1,109 @@
 import React, { useState } from 'react';
 import { addCommande } from "./services/ApiCommandes";
-import  PayPage from "./PayPage"
 import { Link } from 'react-router-dom';
 
 function Cmande() {
+  const [newCommande, setNewCmd] = useState({
+    user: "",
+    totalpric: "",
+    statut: "",
+  });
 
-    const [newCommande, setNewCmd] = useState({
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewCmd({ ...newCommande, [name]: value });
+  };
 
-        user: "",
-        totalpric: "",
-        statut: "", 
+  const AddNewCommande = async () => {
+    try {
+      await addCommande(newCommande);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    
-    });
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNewCmd({ ...newCommande, [name]: value });
-     
-    
-    };
-    const AddNewCommande = async () => {
-        try {
-          await addCommande(newCommande);
-        } catch (error) {
-          console.log(error);
-        } 
-      };
+  // 🎨 Styles CSS
+  const containerStyle = {
+    padding: '30px',
+    maxWidth: '500px',
+    margin: '0 auto',
+    backgroundColor: '#f5f5f5',
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
+  };
 
-    return(
-        <div>
-          
+  const inputStyle = {
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+  };
 
-            <input type="text" name='user' placeholder="nom du client"></input>
-            <input type="number" name='totalpric' placeholder="totalpric"></input>
-            <input type="text" name='statut' placeholder="statut"></input>
-            <button
-                  onClick={() => {
-                    AddNewCommande(newCommande);
-                  }}
-                  className="bg-lightBlue-500 mt-2 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                >
-                  Add
-                </button>
-            <Link to="/PayPage">buy</Link>
-        </div>
-    )
+  const buttonStyle = {
+    backgroundColor: '#007bff',
+    color: 'white',
+    padding: '10px',
+    borderRadius: '6px',
+    border: 'none',
+    fontWeight: 'bold',
+    fontSize: '16px',
+    cursor: 'pointer',
+    transition: '0.3s ease',
+  };
+
+  const buttonHoverStyle = {
+    ...buttonStyle,
+    backgroundColor: '#0056b3',
+  };
+
+  const linkStyle = {
+    textAlign: 'center',
+    marginTop: '10px',
+    color: '#007bff',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+  };
+
+  return (
+    <div style={containerStyle}>
+      <input
+        type="text"
+        name="user"
+        placeholder="Nom du client"
+        style={inputStyle}
+        value={newCommande.user}
+        onChange={handleChange}
+      />
+      <input
+        type="number"
+        name="totalpric"
+        placeholder="Total price"
+        style={inputStyle}
+        value={newCommande.totalpric}
+        onChange={handleChange}
+      />
+      <input
+        type="text"
+        name="statut"
+        placeholder="Statut"
+        style={inputStyle}
+        value={newCommande.statut}
+        onChange={handleChange}
+      />
+      <button
+        onClick={AddNewCommande}
+        style={buttonStyle}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+      >
+        Add
+      </button>
+      <Link to="/PayPage" style={linkStyle}>Buy</Link>
+    </div>
+  );
 }
+
 export default Cmande;
