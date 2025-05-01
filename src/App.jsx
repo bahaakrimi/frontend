@@ -13,6 +13,7 @@ import Cmande   from './Cmande'
 import { CartContext } from './context/CartContext';
 import Panier from './Panier'
 import { CartProvider } from './context/CartContext';
+import { useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import React from 'react';
@@ -34,6 +35,13 @@ function App() {
     const goToCreationUser = () => {
         navigate('/LoginForm');
     };
+    const [showFashionDropdown, setShowFashionDropdown] = useState(false);
+
+    // Gère l'ouverture/fermeture du menu déroulant
+    const toggleFashionDropdown = (e) => {
+      e.preventDefault(); // Empêche la navigation immédiate
+      setShowFashionDropdown(!showFashionDropdown);
+    };
   return (
    
     <><div class="banner_bg_main">
@@ -42,20 +50,29 @@ function App() {
           <div class="row">
             <div class="col-sm-12">
               <div class="custom_menu">
-                <ul>
+              <nav>
+        <ul className="main-nav">
+          <li><Link to="/app">HOME</Link></li>
+          <li><Link to="/Electronic">Electronic</Link></li>
+          <li 
+            className="fashion-item"
+            onMouseEnter={() => setShowFashionDropdown(true)}
+            onMouseLeave={() => setShowFashionDropdown(false)}
+          >
+            <Link to="/Fashion">Fashion</Link>
+            {showFashionDropdown && (
+              <ul className="fashion-dropdown">
+                <li><Link to="/Jewellery">Fashion Men</Link></li>
+                <li><Link to="/Sports">Fashion Women</Link></li>
+              </ul>
+            )}
+          </li>
+          <li><Link to="/Jewellery">Jewellery</Link></li>
+          <li><Link to="/Sports">Sports</Link></li>
+          <li><Link to="/Jeux">Jeux</Link></li>
+        </ul>
+      </nav>
              
-                  <li><Link to="/app">HOME</Link></li>
-                  <li><Link to="/Electronic">Electronic</Link></li>
-                  <li><Link to="/Fashion">Fashion</Link></li>
-                  <li><Link to="/Jewellery">Jewellery</Link></li>
-                  <li><Link to="/Sports">Sports</Link></li>
-                  <li><Link to="/Jeux">Jeux</Link></li>
-                  
-                
-                  
-
-
-                </ul>
               </div>
             </div>
           </div>

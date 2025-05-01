@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const JhumkaProductPage = () => {
   const [showDetails, setShowDetails] = useState(false);
@@ -6,6 +7,12 @@ const JhumkaProductPage = () => {
   const toggleDetails = () => {
     setShowDetails(!showDetails);
   };
+  const navigate = useNavigate();
+    
+    const handleBuyNowClick = () => {
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
 
   return (
     <div style={styles.pageContainer}>
@@ -55,7 +62,7 @@ const JhumkaProductPage = () => {
           <p><strong>Style:</strong> Traditionnel indien</p>
         </div>
 
-        <button style={styles.buyButton}>J'achète</button>
+        <button style={styles.buyButton} onClick={handleBuyNowClick}>J'achète</button>
 
         {/* See More/Less Button */}
         <button 

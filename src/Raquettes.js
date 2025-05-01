@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const RacquetProductPage = () => {
   const [showDetails, setShowDetails] = useState(false);
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
   };
+  const navigate = useNavigate();
+    
+    const handleBuyNowClick = () => {
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
+
 
   return (
     <div style={styles.pageContainer}>
@@ -55,7 +62,7 @@ const RacquetProductPage = () => {
           <p><strong>Équilibre:</strong> 320mm (tête légère)</p>
         </div>
 
-        <button style={styles.buyButton}>J'achète</button>
+        <button style={styles.buyButton} onClick={handleBuyNowClick}>J'achète</button>
 
         {/* Button to show/hide details */}
         <button 

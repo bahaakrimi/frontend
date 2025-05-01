@@ -61,6 +61,62 @@ button.secondary:hover {
   }
 }
 
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+}
+
+.main-nav {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+}
+
+.main-nav li {
+  position: relative;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.fashion-item {
+  position: relative;
+}
+
+.fashion-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  padding: 10px;
+  margin: 0;
+  list-style: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 100;
+  min-width: 150px;
+}
+
+.fashion-dropdown li {
+  padding: 5px 0;
+}
+
+.fashion-dropdown a:hover {
+  color: #007bff;
+}
+
+.eflyer-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
 
 
 

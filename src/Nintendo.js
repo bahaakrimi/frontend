@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const NintendoProductPage = () => {
   const [showDetails, setShowDetails] = useState(false);
@@ -6,6 +7,12 @@ const NintendoProductPage = () => {
   const toggleDetails = () => {
     setShowDetails(!showDetails);
   };
+  const navigate = useNavigate();
+    
+    const handleBuyNowClick = () => {
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
 
   return (
     <div style={styles.pageContainer}>
@@ -55,7 +62,7 @@ const NintendoProductPage = () => {
           <p><strong>Autonomie:</strong> 4.5-9 heures</p>
         </div>
 
-        <button style={styles.buyButton}>J'achète</button>
+        <button style={styles.buyButton} onClick={handleBuyNowClick}>J'achète</button>
 
         {/* Bouton pour afficher/masquer les détails */}
         <button 

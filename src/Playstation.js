@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const ProductPage = () => {
   const [showDetails, setShowDetails] = useState(false);
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
   };
+  const navigate = useNavigate();
+    
+    const handleBuyNowClick = () => {
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
 
   return (
     <div style={styles.pageContainer}>
@@ -54,7 +60,7 @@ const ProductPage = () => {
           <p><strong>Taille:</strong> Ajustable</p>
         </div>
 
-        <button style={styles.buyButton}>J’achète</button>
+        <button style={styles.buyButton} onClick={handleBuyNowClick}>J'achète</button>
 
         {/* Bouton pour afficher/masquer les détails */}
         <button 

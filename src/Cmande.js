@@ -74,7 +74,7 @@ function Cmande() {
         name="user"
         placeholder="Nom du client"
         style={inputStyle}
-        value={newCommande.user}
+
         onChange={handleChange}
       />
       <input
@@ -82,7 +82,7 @@ function Cmande() {
         name="totalpric"
         placeholder="Total price"
         style={inputStyle}
-        value={newCommande.totalpric}
+
         onChange={handleChange}
       />
       <input
@@ -90,16 +90,17 @@ function Cmande() {
         name="statut"
         placeholder="Statut"
         style={inputStyle}
-        value={newCommande.statut}
+      
         onChange={handleChange}
       />
       <button
-        onClick={AddNewCommande}
+        onClick={() => {
+          AddNewCommande(newCommande);
+        }}
         style={buttonStyle}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+    
       >
-        Add
+        Add newCommande
       </button>
       <Link to="/PayPage" style={linkStyle}>Buy</Link>
     </div>

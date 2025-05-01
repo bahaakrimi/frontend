@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { CartContext } from './context/CartContext';
 import Panier from './Panier'
+import { useNavigate } from 'react-router-dom';
 const ProductPage = () => {
   const [showDetails, setShowDetails] = useState(false);
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
   };
+  const navigate = useNavigate();
+    
+    const handleBuyNowClick = () => {
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
 
   return (
     <div style={styles.pageContainer}>
@@ -55,7 +62,7 @@ const ProductPage = () => {
           <p><strong>RAM:</strong> 600</p>
         </div>
 
-        <button style={styles.buyButton}>J’achète</button>
+        <button style={styles.buyButton} onClick={handleBuyNowClick}>J'achète</button>
 
         {/* Bouton pour afficher/masquer les détails */}
         <button 
