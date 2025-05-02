@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 function Cmande() {
   const [newCommande, setNewCmd] = useState({
-    user: "",
-    totalpric: "",
-    statut: "",
+    model: "",
+    prix: "",
+    matricule: "",
   });
 
   const handleChange = (e) => {
@@ -71,24 +71,24 @@ function Cmande() {
     <div style={containerStyle}>
       <input
         type="text"
-        name="user"
-        placeholder="Nom du client"
+        name="model"
+        placeholder="model"
         style={inputStyle}
 
         onChange={handleChange}
       />
       <input
         type="number"
-        name="totalpric"
-        placeholder="Total price"
+        name="prix"
+        placeholder="prix"
         style={inputStyle}
 
         onChange={handleChange}
       />
       <input
         type="text"
-        name="statut"
-        placeholder="Statut"
+        name="matricule"
+        placeholder="matricule"
         style={inputStyle}
       
         onChange={handleChange}
