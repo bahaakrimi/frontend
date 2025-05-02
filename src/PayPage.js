@@ -5,14 +5,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PayPage.css'; 
 
-import { addpaiement } from "./services/ApiPaiement";
+import { createPaiement } from "./services/ApiPaiement";
 import { Link } from 'react-router-dom';
 
 const PayPage = () => {
   const [newpaiement, setNewpaiement] = useState({
-    order: "",
-    payementmethod: "",
-    statut: "",
+    commande: "",
+    user: "",
+    paymentMethod: "",
   });
 
   const handleChange = (e) => {
@@ -22,7 +22,7 @@ const PayPage = () => {
 
   const AddNewPaiement = async () => {
     try {
-      await addpaiement(newpaiement);
+      await createPaiement(newpaiement);
     } catch (error) {
       console.log(error);
     }
@@ -33,9 +33,9 @@ const PayPage = () => {
    
     <>
     <div>
-      <input placeholder='order' name='order' type='text' onChange={handleChange}></input>
-      <input placeholder='payementmethod' name='payementmethod' type='text' onChange={handleChange}></input>
-      <input placeholder='statut' name='statut' type='text' onChange={handleChange}></input>
+      <input placeholder='commande' name='commande' type='text' onChange={handleChange}></input>
+      <input placeholder='user' name='user' type='text' onChange={handleChange}></input>
+      <input placeholder='paymentMethod' name='paymentMethod' type='text' onChange={handleChange}></input>
     
       <button
                   onClick={() => {
