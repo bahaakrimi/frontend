@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import { addUserClient } from "./services/ApiUser";
 
 function CreateUserForm() {
-  const [newUser, setNewUser] = useState({
-    username: "",
-    email: "",
-    password: "", 
-    age: "" ,
-  });
+  
+    const [newUser, setNewUser] = useState({
+      username: "",
+      email: "",
+      password: "", 
+      role: "",
+  
+    });
+  
 
  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
+    console.log(newUser)
   }
   const AddNewUser = async () => {
     try {
@@ -26,21 +30,20 @@ function CreateUserForm() {
 
 
   return (
-    <div >
-      <input placeholder='username' value={newUser.username} name='username' type='text' onChange={handleChange}></input>
-      <input placeholder='email' value={newUser.email} name='email' type='email' onChange={handleChange}></input>
-      <input placeholder='password' value={newUser.password} name='password' type='password' onChange={handleChange}></input>
-      <input placeholder='age' value={newUser.age} name='age' type='number' onChange={handleChange}></input>
-      <button
-                  onClick={() => {AddNewUser(newUser)}}
+<div>
+    <input type='text' name='username' placeholder='username' onChange={handleChange} ></input>
+    <input type='text' name='email' placeholder='email' onChange={handleChange}></input>
+    <input type='password' name='password' placeholder='password' onChange={handleChange}></input>
+    <input type='text' name='role' placeholder='role' onChange={handleChange}></input>
+    <button
+                  onClick={() => {
+                    AddNewUser(newUser);
+                  }}
                   
                 >
                   AddUser
                 </button>
-
-
-      
-    </div>
+   </div>
   );
 };
 
