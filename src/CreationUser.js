@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { addUserClient } from "./services/ApiUser";
+import { useNavigate } from 'react-router-dom';
 
 function CreateUserForm() {
   
+  const navigate = useNavigate();
     const [newUser, setNewUser] = useState({
       username: "",
       email: "",
@@ -21,6 +23,7 @@ function CreateUserForm() {
   const AddNewUser = async () => {
     try {
       await addUserClient(newUser);
+      navigate('/App');
 
     } catch (error) {
       console.log(error);

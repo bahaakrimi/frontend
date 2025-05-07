@@ -29,6 +29,10 @@ import Women from './Women '
 import Tshirt2 from './Tshirt2'
 import Panier from './Panier'
 
+import Getcomandlist from './Getcomandlist'
+import GetProduit from './GetProduit'
+import Userlist from './Userlist'
+
 
 
 
@@ -51,6 +55,10 @@ export default function RoutesComponent() {
       <Route path="/Kangan" element={<Kangan/>}></Route>
       <Route path="/Tshirt2" element={<Tshirt2/>}></Route>
       <Route path="/Panier" element={<Panier/>}></Route>
+      <Route path="/GetProduit" element={<GetProduit/>}></Route>
+      <Route path="/Userlist" element={<Userlist/>}></Route>
+      
+      <Route path="/Getcomandlist" element={<Getcomandlist/>}></Route>
       
 
       <Route path="/Pc" element={<Pc/>}></Route>
