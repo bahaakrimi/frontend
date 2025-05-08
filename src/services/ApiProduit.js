@@ -11,3 +11,6 @@ export async function getAllProduits() {
 export async function deleteProduit(id) {
     return await axios.delete(`${apiurl}/delete/${id}`);  // Modification ici
 }
+export async function updateProduit(userData,idUser) {
+    return await axios.put(`${apiurl}/updateProduit/${idUser}`,userData)
+}

@@ -122,22 +122,20 @@ function App() {
                 <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
                   <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
                 </a>
-                <div class="dropdown-menu ">
-                  <a href="#" class="dropdown-item">
-                    <img src="./assets/images/flag-france.png" class="mr-2" alt="flag" />
-                    French
-                  </a>
-                </div>
               </div>
               <div class="login_menu">
                 <ul>
                   <li><Link to="Panier">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                    <span class="padding_10">Cart</span></Link>
+                    <span class="padding_10">Panier</span></Link>
                   </li>
                   <li><a href="#">
                     <i class="fa fa-user" aria-hidden="true"></i>
                     <button onClick={goToCreationUser} >LOGIN</button></a>
+                  </li>
+                  <li><a href="#">
+                    
+                    <button >LOGOUT</button></a>
                   </li>
                 </ul>
               </div>
@@ -183,6 +181,150 @@ function App() {
           </div>
         </div>
       </div>
+      <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div class="container">
+                <h1 class="fashion_taital">PROMO</h1>
+                <div class="fashion_section_2">
+                  <div class="row">
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                      <h1 style={{ color: 'red', backgroundColor: 'green' }}>EN PROMO</h1>
+
+                        <h4 class="shirt_text">Man T -shirt</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>15dt</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><Link to="/Tshirt2">See More</Link></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                      <h1 style={{  backgroundColor: 'red' }}>EN PROMO</h1>
+
+                        <h4 class="shirt_text">computer</h4>
+                        
+
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>589dt</span></p>
+                        <div class="electronic_img"><img src="./assets/images/computer-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><Link to="/Tshirt">See More</Link></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                      <h1 style={{ color: 'red', backgroundColor: 'green' }}>EN PROMO</h1>
+
+
+                        <h4 class="shirt_text">XBOX</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>429dt</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/xbox.jpg"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><Link to="/Women">See More</Link></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="container">
+                <h1 class="fashion_taital">Man & Woman Fashion</h1>
+                <div class="fashion_section_2">
+                  <div class="row">
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                        <h4 class="shirt_text">Man T -shirt</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><Link to="/Tshirt2">See More</Link></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                        <h4 class="shirt_text">Man -shirt</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><Link to="/Tshirt">See More</Link></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                        <h4 class="shirt_text">Woman Scart</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
+                        <div class="tshirt_img"><img src="images/women-clothes-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><Link to="/Women">See More</Link></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="container">
+                <h1 class="fashion_taital">Man & Woman Fashion</h1>
+                <div class="fashion_section_2">
+                  <div class="row">
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                        <h4 class="shirt_text">Man T -shirt</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/tshirt-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><a href="#">See More</a></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                        <h4 class="shirt_text">Man -shirt</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/dress-shirt-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><a href="#">See More</a></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-4">
+                      <div class="box_main">
+                        <h4 class="shirt_text">Woman Scart</h4>
+                        <p class="price_text">Price  <span style={{color:" #262626;"}}>$ 30</span></p>
+                        <div class="tshirt_img"><img src="./assets/images/women-clothes-img.png"/></div>
+                        <div class="btn_main">
+                          <div class="buy_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                          <div class="seemore_bt"><a href="#">See More</a></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
+            <i class="fa fa-angle-left"></i>
+          </a>
+          <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
+            <i class="fa fa-angle-right"></i>
+          </a>
+        
     </div><div class="fashion_section">
         <div id="main_slider" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">

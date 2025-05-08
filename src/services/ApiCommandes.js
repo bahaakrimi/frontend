@@ -15,3 +15,6 @@ export async function getAllCommande() {
 export async function deleteCommandeById(id) {
     return await axios.delete(`${apiurl}/deleteCommandeById/${id}`)
   }
+  export const acceptCommandeById = (id) => {
+    return axios.post(`/api/commandes/${id}/accept`);
+  };
