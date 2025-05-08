@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Produit.css';
+import { Link } from 'react-router-dom';
 
 const ProduitManager = () => {
   // États pour la liste des produits
@@ -111,6 +112,14 @@ const ProduitManager = () => {
 
   return (
     <div className="produit-manager">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <Link className="navbar-brand" to="/">Dashboard</Link>
+        <div className="navbar-nav">
+          <Link className="nav-link" to="/Userlist">Utilisateurs</Link>
+          <Link className="nav-link" to="/GetProduit">Produits</Link>
+          <Link className="nav-link" to="/Getcomandlist">Commandes</Link>
+        </div>
+      </nav>
       {/* Formulaire d'ajout */}
       <div className="add-produit-form">
         <h2>Ajouter un nouveau produit</h2>
