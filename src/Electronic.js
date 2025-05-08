@@ -193,7 +193,7 @@ function Electronic() {
                               <button onClick={handleBuyNowClick}>Buy Now</button>
                             </div>
                             <div class="seemore_bt">
-                              <Link to={`/${produit.name.toLowerCase()}`}>see more</Link>
+                              <button >Panier</button>
                             </div>
                           </div>
                         </div>

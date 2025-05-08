@@ -17,12 +17,18 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
+import { useCart } from './context/CartContext';
+
+
 
 
 
 
 
 function App() {
+    const { totalItems } = useCart(); // Ajoutez cette ligne
+    const { addToCart } = useCart();
 
     const navigate = useNavigate();
     
@@ -84,13 +90,17 @@ function App() {
 
         fetchProduits();
     }, []);
+    
 
     if (loading) return <div className="loading">Chargement en cours...</div>;
     if (error) return <div className="error">Erreur: {error}</div>;
+  
     
   return (
+    
    
-    <><div class="banner_bg_main">
+    <><CartProvider>
+    <div class="banner_bg_main">
       <div class="container">
         <div class="header_section_top">
           <div class="row">
@@ -171,10 +181,13 @@ function App() {
               </div>
               <div class="login_menu">
                 <ul>
-                  <li><Link to="Panier">
-                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                    <span class="padding_10">Panier</span></Link>
-                  </li>
+                  <Link to="/Panier">
+                       <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                        <span className="padding_10">Panier</span>
+                        {totalItems > 0 && (
+                        <span className="cart-count">{totalItems}</span>
+                         )}
+                   </Link>
                   <li><a href="#">
                     <i class="fa fa-user" aria-hidden="true"></i>
                     <button onClick={goToCreationUser} >LOGIN</button></a>
@@ -242,17 +255,28 @@ function App() {
                         <p className="price">Price ${produit.price}</p>
                         <div className="button-group">
                             <button className="buy-now">Buy Now</button>
-                            <Link to={`/produit/${produit._id}`} className="see-more">See More</Link>
+                            <button 
+                                className="add-to-cart"
+                                onClick={() => addToCart({
+                                id: produit._id,
+                                name: produit.name,
+                                price: produit.price,
+                                image: produit.imageUrl
+                                })}
+                                >
+                                  Ajouter au panier
+                                </button>
                         </div>
                     </div>
                 ))}
             </div>
         </div>
       
-      
+      </CartProvider>
           
           
       </>
+      
   );
 }
 

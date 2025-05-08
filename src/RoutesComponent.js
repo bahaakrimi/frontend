@@ -33,7 +33,12 @@ import A from './A'
 import Getcomandlist from './Getcomandlist'
 import GetProduit from './GetProduit'
 import Userlist from './Userlist'
+import ProductList from './ProductList'
+import HomePage from './HomePage'
+import PanierPage from './PanierPage'
 
+
+import { CartProvider } from './context/CartContext';
 
 
 
@@ -59,7 +64,8 @@ export default function RoutesComponent() {
       <Route path="/Panier" element={<Panier/>}></Route>
       <Route path="/GetProduit" element={<GetProduit/>}></Route>
       <Route path="/Userlist" element={<Userlist/>}></Route>
-      <Route path="/A" element={<A/>}></Route>
+      
+      <Route path="/ProductList" element={<ProductList/>}></Route>
     
       
       <Route path="/Getcomandlist" element={<Getcomandlist/>}></Route>
@@ -78,6 +84,9 @@ export default function RoutesComponent() {
       <Route path="/Jhumka" element={<Jhumka/>}></Route>
       <Route path="/HandGripDesMains" element={<HandGripDesMains/>}></Route>
       <Route path="/Nintendo" element={<Nintendo/>}></Route>
+      <Route path="/PanierPage" element={<PanierPage/>}></Route>
+      <Route path="/HomePage" element={<HomePage/>}></Route>
+     
 
 
 
