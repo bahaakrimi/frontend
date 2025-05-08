@@ -4,12 +4,9 @@ import './Produit.css';
 import { Link } from 'react-router-dom';
 
 const ProduitManager = () => {
-  // États pour la liste des produits
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // États pour le formulaire
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -18,51 +15,58 @@ const ProduitManager = () => {
     image: null
   });
   const [previewImage, setPreviewImage] = useState(null);
+  const [editingId, setEditingId] = useState(null);
 
-  // Récupérer les produits
   useEffect(() => {
-    const fetchProduits = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/produit/with-images');
-        setProduits(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
     fetchProduits();
   }, []);
 
-  // Gestion des changements dans le formulaire
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  // Gestion du fichier image
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setFormData(prev => ({
-      ...prev,
-      image: file
-    }));
-    
-    // Prévisualisation de l'image
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result);
-    };
-    if (file) {
-      reader.readAsDataURL(file);
+  const fetchProduits = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/produit/with-images');
+      setProduits(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
     }
   };
 
-  // Soumission du formulaire
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setFormData(prev => ({ ...prev, image: file }));
+    
+    const reader = new FileReader();
+    reader.onloadend = () => setPreviewImage(reader.result);
+    if (file) reader.readAsDataURL(file);
+  };
+
+  const handleEdit = (produit) => {
+    setEditingId(produit._id);
+    setFormData({
+      name: produit.name,
+      price: produit.price,
+      category: produit.category,
+      nbrproduit: produit.nbrproduit,
+      image: null
+    });
+    setPreviewImage(produit.imageUrl);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData({
+      name: '', price: '', category: '', nbrproduit: '', image: null
+    });
+    setPreviewImage(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -71,39 +75,66 @@ const ProduitManager = () => {
     data.append('price', formData.price);
     data.append('category', formData.category);
     data.append('nbrproduit', formData.nbrproduit);
-    data.append('image_produit', formData.image);
+    if (formData.image) data.append('image_produit', formData.image);
 
     try {
-      const response = await axios.post(
-        'http://localhost:5000/produit/addProduitWithImg', 
-        data,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
+      if (editingId) {
+        const response = await axios.put(
+          `http://localhost:5000/produit/updateProduit/${editingId}`, 
+          data,
+          { 
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } 
           }
-        }
-      );
-
-      // Ajouter le nouveau produit à la liste
-      setProduits([...produits, {
-        ...response.data,
-        imageUrl: `${window.location.origin}/files/${response.data.image}`
-      }]);
-      
-      // Réinitialiser le formulaire
-      setFormData({
-        name: '',
-        price: '',
-        category: '',
-        nbrproduit: '',
-        image: null
-      });
-      setPreviewImage(null);
-      
-      alert('Produit ajouté avec succès!');
+        );
+        
+        setProduits(produits.map(p => 
+          p._id === editingId ? { 
+            ...response.data,
+            imageUrl: response.data.imageUrl || p.imageUrl
+          } : p
+        ));
+        alert('Produit mis à jour avec succès!');
+      } else {
+        const response = await axios.post(
+          'http://localhost:5000/produit/addProduitWithImg', 
+          data,
+          { 
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            } 
+          }
+        );
+        setProduits([...produits, {
+          ...response.data,
+          imageUrl: `/files/${response.data.image}`
+        }]);
+        alert('Produit ajouté avec succès!');
+      }
+      cancelEdit();
     } catch (err) {
-      console.error('Erreur lors de l\'ajout du produit:', err);
-      alert('Erreur lors de l\'ajout du produit');
+      console.error('Erreur:', err);
+      alert(`Erreur: ${err.response?.data?.message || err.message}`);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      try {
+        await axios.delete(`http://localhost:5000/produit/deleteProduit/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setProduits(produits.filter(p => p._id !== id));
+        alert('Produit supprimé avec succès!');
+      } catch (err) {
+        console.error('Erreur:', err);
+        alert(`Erreur lors de la suppression: ${err.response?.data?.message || err.message}`);
+      }
     }
   };
 
@@ -120,87 +151,99 @@ const ProduitManager = () => {
           <Link className="nav-link" to="/Getcomandlist">Commandes</Link>
         </div>
       </nav>
-      {/* Formulaire d'ajout */}
+      
       <div className="add-produit-form">
-        <h2>Ajouter un nouveau produit</h2>
+        <h2>{editingId ? 'Modifier le produit' : 'Ajouter un nouveau produit'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Nom du produit:</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
+            <input 
+              type="text" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              required 
             />
           </div>
           
           <div className="form-group">
             <label>Prix:</label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              required
-              min="0"
-              step="0.01"
+            <input 
+              type="number" 
+              name="price" 
+              value={formData.price} 
+              onChange={handleChange} 
+              required 
+              min="0" 
+              step="0.01" 
             />
           </div>
           
           <div className="form-group">
             <label>Catégorie:</label>
-            <input
-              type="text"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
+            <input 
+              type="text" 
+              name="category" 
+              value={formData.category} 
+              onChange={handleChange} 
             />
           </div>
           
           <div className="form-group">
             <label>Quantité disponible:</label>
-            <input
-              type="number"
-              name="nbrproduit"
-              value={formData.nbrproduit}
-              onChange={handleChange}
-              required
-              min="0"
+            <input 
+              type="number" 
+              name="nbrproduit" 
+              value={formData.nbrproduit} 
+              onChange={handleChange} 
+              required 
+              min="0" 
             />
           </div>
           
           <div className="form-group">
             <label>Image du produit:</label>
-            <input
-              type="file"
-              name="image"
-              onChange={handleImageChange}
-              accept="image/*"
-              required
+            <input 
+              type="file" 
+              name="image" 
+              onChange={handleImageChange} 
+              accept="image/*" 
+              required={!editingId} 
             />
             {previewImage && (
               <div className="image-preview">
                 <img src={previewImage} alt="Preview" />
+                {editingId && <p>Laisser vide pour conserver l'image actuelle</p>}
               </div>
             )}
           </div>
           
-          <button type="submit" className="submit-btn">Ajouter le produit</button>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">
+              {editingId ? 'Mettre à jour' : 'Ajouter'}
+            </button>
+            {editingId && (
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={cancelEdit}
+              >
+                Annuler
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
-      {/* Liste des produits */}
       <div className="produit-list">
         <h2>Nos produits</h2>
         <div className="produit-grid">
-          {produits.map((produit) => (
+          {produits.map(produit => (
             <div key={produit._id} className="produit-card">
               <div className="produit-image-container">
                 <img 
                   src={produit.imageUrl} 
-                  alt={produit.name} 
-                  className="produit-image"
+                  alt={produit.name}
                   onError={(e) => {
                     e.target.src = 'http://localhost:5000/files/default-product.png';
                   }}
@@ -211,6 +254,20 @@ const ProduitManager = () => {
                 <p>Prix: ${produit.price}</p>
                 <p>Catégorie: {produit.category}</p>
                 <p>Stock: {produit.nbrproduit}</p>
+              </div>
+              <div className="produit-actions">
+                <button 
+                  className="btn btn-warning"
+                  onClick={() => handleEdit(produit)}
+                >
+                  Modifier
+                </button>
+                <button 
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(produit._id)}
+                >
+                  Supprimer
+                </button>
               </div>
             </div>
           ))}

@@ -204,12 +204,7 @@ function Jewellery() {
               </div>
             </div>
           </div>
-          <a className="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
-            <i className="fa fa-angle-right"></i>
-          </a>
-          <a className="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
-            <i className="fa fa-angle-left"></i>
-          </a>
+          
         </div>
       </div>
 
