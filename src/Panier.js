@@ -63,7 +63,7 @@ const Panier = () => {
               <button onClick={clearCart} className="clear-cart">
                 Vider le panier
               </button>
-              <Link to="/paypage" className="checkout">
+              <Link to="/Xbox" className="checkout">
                 Passer la commande
               </Link>
             </div>

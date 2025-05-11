@@ -2,13 +2,41 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PayPage from './PayPage';
 import LoginForm from './LoginForm';
+import { CartProvider } from './context/CartContext';
+import { useCart } from './context/CartContext';
+import axios from 'axios';
+import './Jeux.css';
 
 function Electronic() {
+  const { totalItems } = useCart(); // Ajoutez cette ligne
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [jeux, setJeux] = useState([]);
+  useEffect(() => {
+      const fetchJeux = async () => {
+        try {
+          const response = await axios.get('http://localhost:5000/produit/with-images');
+          const jeuxProduits = response.data.filter(produit => produit.category === 'electronic');
+          setJeux(jeuxProduits);
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+  
+      fetchJeux();
+    }, []);
+  
 
+  
   useEffect(() => {
     const fetchProduits = async () => {
       try {
@@ -33,144 +61,203 @@ function Electronic() {
   };
 
   const handleBuyNowClick = () => {
-    navigate('/paypage');
-  };
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
 
   if (loading) return <div>Chargement en cours...</div>;
   if (error) return <div>Erreur: {error}</div>;
 
   // Filtrer les produits de la catégorie "electronic"
+  
+  
+
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      setSearchError('Veuillez entrer un terme de recherche');
+      return;
+    }
+
+    setIsLoading(true);
+    setSearchError(null);
+    setProducts([]);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/produit/searchProduitByName?name=${encodeURIComponent(searchTerm)}`
+      );
+
+      if (!response.ok) throw new Error('Erreur de recherche');
+
+      const data = await response.json();
+      setProducts(data.produits || []);
+
+      if (!data.produits?.length) {
+        setSearchError('Aucun produit trouvé');
+      }
+    } catch (error) {
+      setSearchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const electronicProduits = produits.filter(produit => produit.category === 'electronic');
 
   return (
-    <>
-      <div class="banner_bg_main">
-        <div class="container">
-          <div class="header_section_top">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="custom_menu">
-                  <ul>
-                    <li><Link to="/app">HOME</Link></li>
-                    <li><Link to="/Electronic">Electronic</Link></li>
-                    <li><Link to="/Fashion">Fashion</Link></li>
-                    <li><Link to="/Jewellery">Jewellery</Link></li>
-                    <li><Link to="/Sports">Sports</Link></li>
-                    <li><Link to="/Jeux">Jeux</Link></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="logo_section">
+    <><CartProvider>
+        <div class="banner_bg_main">
           <div class="container">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="logo"><a href="index.html"><img src="./assets/images/logo.png"/></a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="header_section">
-          <div class="container">
-            <div class="containt_main">
-              <div id="mySidenav" class="sidenav">
-                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                <a href="index.html">Home</a>
-                <a href="fashion.html">Fashion</a>
-                <a href="electronic.html">Electronic</a>
-                <a href="jewellery.html">Jewellery</a>
-              </div>
-              <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png"/></span>
-              <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Category</button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </div>
-              <div class="main">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search this blog"/>
-                  <div class="input-group-append">
-                    <button class="btn btn-secondary" type="button" style={{color:"#f26522;"}}>
-                      <i class="fa fa-search"></i>
-                    </button>
+            <div class="header_section_top">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="custom_menu">
+                  <nav>
+            <ul className="main-nav">
+              <li><Link to="/app">HOME</Link></li>
+              <li><Link to="/Electronic">Electronic</Link></li>
+              <li><Link to="/Fashion">Fashion</Link></li>
+                
+              <li><Link to="/Jewellery">Jewellery</Link></li>
+              <li><Link to="/Sports">Sports</Link></li>
+              <li><Link to="/Jeux">Jeux</Link></li>
+            </ul>
+          </nav>
+                 
                   </div>
                 </div>
               </div>
-              <div class="header_box">
-                <div class="lang_box">
-                  <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
-                    <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2" title="United Kingdom"/> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                  </a>
-                  <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item">
-                      <img src="./assets/images/flag-france.png" class="mr-2" alt="flag"/>
-                      French
+            </div>
+          </div>
+    
+          <div class="logo_section">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="logo"><a href="index.html"><img src="./assets/images/logo.png" /></a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="header_section">
+            <div class="container">
+              <div class="containt_main">
+                <div id="mySidenav" class="sidenav">
+                  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                  <a href="index.html">Home</a>
+                  <a href="Electronic">Electronics</a>
+                  
+                </div>
+                <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
+                <div class="dropdown">
+                  
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </div>
+                </div>
+                <div class="main">
+                  <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Rechercher un produit..."
+          style={{ padding: '8px', width: '300px' }}
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <button 
+          onClick={handleSearch} 
+          disabled={isLoading}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: isLoading ? '#ccc' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          <i class="fa fa-search"></i>
+          
+        </button>
+      </div>
+
+                </div>
+                <div class="header_box">
+                  <div class="lang_box ">
+                    <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
+                      <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
                     </a>
                   </div>
-                </div>
-                <div class="login_menu">
-                  <ul>
-                    <li><a href="#">
-                      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                      <span class="padding_10">Cart</span></a>
-                    </li>
-                    <li><a href="#">
-                      <i class="fa fa-user" aria-hidden="true"></i>
-                      <button onClick={goToCreationUser}>LOGIN</button></a>
-                    </li>
-                  </ul>
+                  <div class="login_menu">
+                    <ul>
+                      <Link to="/Panier">
+                           <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                            <span className="padding_10">Panier</span>
+                            {totalItems > 0 && (
+                            <span className="cart-count">{totalItems}</span>
+                             )}
+                       </Link>
+                      <li><a href="#">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <button onClick={goToCreationUser} >LOGIN</button></a>
+                      </li>
+                      <li><a href="#">
+                        
+                        <button >LOGOUT</button></a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+          <div class="banner_section layout_padding">
+            <div class="container">
+              <div id="my_slider" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                        <div class="buynow_bt"><a href="buy.js">Buy Now</a></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                        <div class="buynow_bt"><a href="buy">Buy Now</a></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                        <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+                  <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+                  <i class="fa fa-angle-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          </div>
+          
+          
+          
+          
+
         
-        <div class="banner_section layout_padding">
-          <div class="container">
-            <div id="my_slider" class="carousel slide" data-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Get Start <br/>Your favorite shopping</h1>
-                      <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="carousel-item">
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Get Start <br/>Your favorite shopping</h1>
-                      <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="carousel-item">
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Get Start <br/>Your favorite shopping</h1>
-                      <div class="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                <i class="fa fa-angle-left"></i>
-              </a>
-              <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                <i class="fa fa-angle-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
       
       <div class="fashion_section">
         <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
@@ -179,27 +266,161 @@ function Electronic() {
               <div class="container">
                 <h1 class="fashion_taital">Electronic</h1>
                 <div class="fashion_section_2">
-                  <div class="row">
-                    {electronicProduits.map((produit) => (
-                      <div class="col-lg-4 col-sm-4" key={produit._id}>
-                        <div class="box_main">
-                          <h4 class="shirt_text">{produit.name}</h4>
-                          <p class="price_text">Price <span style={{ color: "#262626" }}>${produit.price}</span></p>
-                          <div class="electronic_img">
-                            <img src={produit.imageUrl} alt={produit.name} />
-                          </div>
-                          <div class="btn_main">
-                            <div class="buy_bt">
-                              <button onClick={handleBuyNowClick}>Buy Now</button>
+                  {searchError && (
+    <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
+)}
+
+<div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '25px',
+    padding: '25px'
+}}>
+    {products.map(product => (
+        <div key={product._id} style={{ 
+            padding: '20px',
+            border: '2px solid #3498db',
+            borderRadius: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            background: '#f8fbfe',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+            {/* En-tête renforcé */}
+            <div style={{ 
+                marginBottom: '20px',
+                textAlign: 'center',
+                lineHeight: '1.4'
+            }}>
+                <h3 style={{ 
+                    margin: '0 0 8px 0', 
+                    fontSize: '1.4rem',
+                    fontWeight: 600,
+                    color: '#2c3e50'
+                }}>
+                    {product.name}
+                </h3>
+                <p style={{ 
+                    margin: 0,
+                    fontSize: '1.3rem',
+                    color: '#e74c3c',
+                    fontWeight: 'bold',
+                    letterSpacing: '0.5px'
+                }}>
+                    {product.price}dt
+                </p>
+            </div>
+
+            {/* Image agrandie */}
+            <div style={{ 
+                flexGrow: 1, 
+                marginBottom: '20px',
+                border: '1px solid #ecf0f1',
+                borderRadius: '8px',
+                padding: '10px'
+            }}>
+                <img 
+                    src={product.imageUrl} 
+                    alt={product.name}
+                    style={{ 
+                        width: '100%',
+                        height: '220px',
+                        objectFit: 'contain',
+                        margin: '0 auto',
+                        display: 'block'
+                    }}
+                    onError={(e) => {
+                        e.target.src = `${window.location.origin}/default-product.png`;
+                    }}
+                />
+            </div>
+
+            {/* Bouton élargi */}
+            <div style={{ textAlign: 'center' }}>
+                <button 
+                    onClick={handleBuyNowClick}
+                    style={{
+                        padding: '12px 25px',
+                        backgroundColor: '#3498db',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '1.1rem',
+                        width: '100%',
+                        transition: 'all 0.3s ease',
+                        fontWeight: 500
+                    }}
+                    onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
+                    onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
+                >
+                    Ajouter une commande
+                </button>
+            </div>
+        </div>
+    ))}
+</div>
+
+                  <div className="jeux-container">
+                          {jeux.map(jeu => (
+                            <div key={jeu._id} className={`jeu-card ${jeu.promotion === 'oui' ? 'promo' : ''}`}>
+                              {jeu.promotion === 'oui' && (
+                                <div className="promo-banner">EN PROMOTION</div>
+                              )}
+                              
+                              <div className="jeu-image-container">
+                                <img 
+                                  src={jeu.imageUrl} 
+                                  alt={jeu.name}
+                                  onError={(e) => {
+                                    e.target.src = 'http://localhost:5000/files/default-product.png';
+                                  }}
+                                />
+                              </div>
+                              
+                              <div className="jeu-info">
+                                <h3>{jeu.name}</h3>
+                                
+                                <div className="jeu-pricing">
+                                  {jeu.promotion === 'oui' ? (
+                                    <>
+                                      <span className="original-price">{jeu.price} TND</span>
+                                      <span className="promo-price">{jeu.promotionprice} TND</span>
+                                    </>
+                                  ) : (
+                                    <span className="normal-price">{jeu.price} TND</span>
+                                  )}
+                                </div>
+                                
+                                <div className="jeu-stock">
+                                  Disponible: {jeu.nbrproduit} unités
+                                </div>
+                                
+                                <div className="product-actions">
+        <button 
+          className="custom-order-btn"
+          onClick={handleBuyNowClick}
+        >
+          Ajouter une commande
+        </button>
+        <button 
+        
+          onClick={() => addToCart({
+            id: jeu._id,
+            name: jeu.name,
+            price: jeu.promotion === 'oui' ? jeu.promotionprice : jeu.price,
+            image: jeu.imageUrl
+          })}
+          className="custom-cart-btn"
+        >
+          Ajouter au panier
+        </button>
+      </div>
+                              </div>
                             </div>
-                            <div class="seemore_bt">
-                              <button >Panier</button>
-                            </div>
-                          </div>
+                          ))}
                         </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -237,7 +458,7 @@ function Electronic() {
         <div class="container">
           <p class="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html Templates</a></p>
         </div>
-      </div>
+      </div></CartProvider>
     </>
   );
 }

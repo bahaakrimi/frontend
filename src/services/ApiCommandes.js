@@ -9,12 +9,19 @@ export async function getAllCommande() {
     return await axios.get(`${apiurl}/getAllCommande`)
   }
  
-  export async function updateCommande(userData,idUser) {
-    return await axios.put(`${apiurl}/updateCommande/${idUser}`,userData)
+ // Dans ApiCommande.js (frontend)
+export async function updateCommande(id, userData) {  // Notez le paramètre 'id' séparé
+  return await axios.put(`${apiurl}/updateCommande/${id}`, userData)
 }
 export async function deleteCommandeById(id) {
     return await axios.delete(`${apiurl}/deleteCommandeById/${id}`)
   }
-  export const acceptCommandeById = (id) => {
-    return axios.post(`/api/commandes/${id}/accept`);
-  };
+  
+  export async function affectCommande(data) {
+  return await axios.put(`${apiurl}/affect`, data, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    }
+  });
+}

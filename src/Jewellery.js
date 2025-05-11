@@ -2,39 +2,49 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PayPage from './PayPage';
 import LoginForm from './LoginForm';
+import { CartProvider } from './context/CartContext';
+import { useCart } from './context/CartContext';
+import axios from 'axios';
+import './Jeux.css';
 
 function Jewellery() {
+  const { totalItems } = useCart(); // Ajoutez cette ligne
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [jeux, setJeux] = useState([]);
   useEffect(() => {
-    const fetchProduits = async () => {
+    const fetchJeux = async () => {
       try {
-        const response = await fetch('http://localhost:5000/produit/with-images');
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des produits');
-        }
-        const data = await response.json();
-        setProduits(data);
+        const response = await axios.get('http://localhost:5000/produit/with-images');
+        const jeuxProduits = response.data.filter(produit => produit.category === 'jewellery');
+        setJeux(jeuxProduits);
+        setLoading(false);
       } catch (err) {
         setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
 
-    fetchProduits();
+    fetchJeux();
   }, []);
+
+  if (loading) return <div className="loading">Chargement en cours...</div>;
+  if (error) return <div className="error">Erreur: {error}</div>;
+ 
+
+
 
   const goToCreationUser = () => {
     navigate('/LoginForm');
   };
 
   const handleBuyNowClick = () => {
-    navigate('/paypage');
-  };
+        // Redirection vers la page de paiement
+        navigate('/cmande');
+    };
 
   if (loading) return <div>Chargement en cours...</div>;
   if (error) return <div>Erreur: {error}</div>;
@@ -43,135 +53,137 @@ function Jewellery() {
   const jewelleryProduits = produits.filter(produit => produit.category === 'jewellery');
 
   return (
-    <>
-      <div className="banner_bg_main">
-        <div className="container">
-          <div className="header_section_top">
-            <div className="row">
-              <div className="col-sm-12">
-                <div className="custom_menu">
-                  <ul>
-                    <li><Link to="/app">HOME</Link></li>
-                    <li><Link to="/Electronic">Electronic</Link></li>
-                    <li><Link to="/Fashion">Fashion</Link></li>
-                    <li><Link to="/Jewellery">Jewellery</Link></li>
-                    <li><Link to="/Sports">Sports</Link></li>
-                    <li><Link to="/Jeux">Jeux</Link></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="logo_section">
-          <div className="container">
-            <div className="row">
-              <div className="col-sm-12">
-                <div className="logo"><a href="index.html"><img src="./assets/images/logo.png" alt="logo"/></a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="header_section">
-          <div className="container">
-            <div className="containt_main">
-              <div id="mySidenav" className="sidenav">
-                <a href="javascript:void(0)" className="closebtn" onClick={() => {}}>&times;</a>
-                <a href="index.html">Home</a>
-                <a href="fashion.html">Fashion</a>
-                <a href="electronic.html">Electronic</a>
-                <a href="jewellery.html">Jewellery</a>
-              </div>
-              <span className="toggle_icon" onClick={() => {}}><img src="./assets/images/toggle-icon.png" alt="toggle"/></span>
-              <div className="dropdown">
-                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Category</button>
-                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a className="dropdown-item" href="#">Action</a>
-                  <a className="dropdown-item" href="#">Another action</a>
-                  <a className="dropdown-item" href="#">Something else here</a>
-                </div>
-              </div>
-              <div className="main">
-                <div className="input-group">
-                  <input type="text" className="form-control" placeholder="Search this blog"/>
-                  <div className="input-group-append">
-                    <button className="btn btn-secondary" type="button" style={{color: "#f26522"}}>
-                      <i className="fa fa-search"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="header_box">
-                <div className="lang_box">
-                  <a href="#" title="Language" className="nav-link" data-toggle="dropdown" aria-expanded="true">
-                    <img src="./assets/images/flag-uk.png" alt="flag" className="mr-2" title="United Kingdom"/> English <i className="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                  </a>
-                  <div className="dropdown-menu">
-                    <a href="#" className="dropdown-item">
-                      <img src="./assets/images/flag-france.png" className="mr-2" alt="flag"/>
-                      French
-                    </a>
-                  </div>
-                </div>
-                <div className="login_menu">
-                  <ul>
-                    <li><a href="#">
-                      <i className="fa fa-shopping-cart" aria-hidden="true"></i>
-                      <span className="padding_10">Cart</span></a>
-                    </li>
-                    <li><a href="#">
-                      <i className="fa fa-user" aria-hidden="true"></i>
-                      <button onClick={goToCreationUser}>LOGIN</button></a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="banner_section layout_padding">
-          <div className="container">
-            <div id="my_slider" className="carousel slide" data-ride="carousel">
-              <div className="carousel-inner">
-                <div className="carousel-item active">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <h1 className="banner_taital">Get Start <br/>Your favorite shopping</h1>
-                      <div className="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+        <><CartProvider>
+                <div class="banner_bg_main">
+                  <div class="container">
+                    <div class="header_section_top">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="custom_menu">
+                         <nav>
+                <ul className="main-nav">
+                  <li><Link to="/app">HOME</Link></li>
+                  <li><Link to="/Electronic">Electronic</Link></li>
+                  <li><Link to="/Fashion">Fashion</Link></li>
+                    
+                  <li><Link to="/Jewellery">Jewellery</Link></li>
+                  <li><Link to="/Sports">Sports</Link></li>
+                  <li><Link to="/Jeux">Jeux</Link></li>
+                </ul>
+              </nav>
+                         
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <h1 className="banner_taital">Get Start <br/>Your favorite shopping</h1>
-                      <div className="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+            
+                  <div class="logo_section">
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="logo"><a href="index.html"><img src="./assets/images/logo.png" /></a></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <h1 className="banner_taital">Get Start <br/>Your favorite shopping</h1>
-                      <div className="buynow_bt"><button onClick={handleBuyNowClick}>Buy Now</button></div>
+                  <div class="header_section">
+                    <div class="container">
+                      <div class="containt_main">
+                        <div id="mySidenav" class="sidenav">
+                          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                          <a href="index.html">Home</a>
+                          <a href="Electronic">Electronics</a>
+                          
+                        </div>
+                        <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
+                        <div class="dropdown">
+                          <Link to="/Cmande"><button  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Command
+                          </button></Link>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                          </div>
+                        </div>
+                        <div class="main">
+                          <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search this blog" />
+                            <div class="input-group-append">
+                              <button class="btn btn-secondary" type="button" >
+                                <i class="fa fa-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="header_box">
+                          <div class="lang_box ">
+                            <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
+                              <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
+                            </a>
+                          </div>
+                          <div class="login_menu">
+                            <ul>
+                              <Link to="/Panier">
+                                   <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    <span className="padding_10">Panier</span>
+                                    {totalItems > 0 && (
+                                    <span className="cart-count">{totalItems}</span>
+                                     )}
+                               </Link>
+                              <li><a href="#">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <button onClick={goToCreationUser} >LOGIN</button></a>
+                              </li>
+                              <li><a href="#">
+                                
+                                <button >LOGOUT</button></a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <a className="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                <i className="fa fa-angle-left"></i>
-              </a>
-              <a className="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                <i className="fa fa-angle-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      
+                  <div class="banner_section layout_padding">
+                    <div class="container">
+                      <div id="my_slider" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                                <div class="buynow_bt"><a href="buy.js">Buy Now</a></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="carousel-item">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                                <div class="buynow_bt"><a href="buy">Buy Now</a></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="carousel-item">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                                <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+                          <i class="fa fa-angle-left"></i>
+                        </a>
+                        <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+                          <i class="fa fa-angle-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
       <div className="fashion_section">
         <div id="jewellery_main_slider" className="carousel slide" data-ride="carousel">
           <div className="carousel-inner">
@@ -179,27 +191,64 @@ function Jewellery() {
               <div className="container">
                 <h1 className="fashion_taital">Jewellery</h1>
                 <div className="fashion_section_2">
-                  <div className="row">
-                    {jewelleryProduits.map((produit) => (
-                      <div className="col-lg-4 col-sm-4" key={produit._id}>
-                        <div className="box_main">
-                          <h4 className="shirt_text">{produit.name}</h4>
-                          <p className="price_text">Price <span style={{ color: "#262626" }}>${produit.price}</span></p>
-                          <div className="jewellery_img">
-                            <img src={produit.imageUrl} alt={produit.name} />
-                          </div>
-                          <div className="btn_main">
-                            <div className="buy_bt">
-                              <button onClick={handleBuyNowClick}>Buy Now</button>
-                            </div>
-                            <div className="seemore_bt">
-                              <Link to={`/${produit.name.toLowerCase()}`}>See More</Link>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <div className="jeux-container">
+        {jeux.map(jeu => (
+          <div key={jeu._id} className={`jeu-card ${jeu.promotion === 'oui' ? 'promo' : ''}`}>
+            {jeu.promotion === 'oui' && (
+              <div className="promo-banner">EN PROMOTION</div>
+            )}
+            
+            <div className="jeu-image-container">
+              <img 
+                src={jeu.imageUrl} 
+                alt={jeu.name}
+                onError={(e) => {
+                  e.target.src = 'http://localhost:5000/files/default-product.png';
+                }}
+              />
+            </div>
+            
+            <div className="jeu-info">
+              <h3>{jeu.name}</h3>
+              
+              <div className="jeu-pricing">
+                {jeu.promotion === 'oui' ? (
+                  <>
+                    <span className="original-price">{jeu.price} TND</span>
+                    <span className="promo-price">{jeu.promotionprice} TND</span>
+                  </>
+                ) : (
+                  <span className="normal-price">{jeu.price} TND</span>
+                )}
+              </div>
+              
+              <div className="jeu-stock">
+                Disponible: {jeu.nbrproduit} unités
+              </div>
+                  </div>  
+      <div className="product-actions">
+        <button 
+          className="custom-order-btn"
+          onClick={handleBuyNowClick}
+        >
+          Ajouter une commande
+        </button>
+        <button 
+        
+          onClick={() => addToCart({
+            id: jeu._id,
+            name: jeu.name,
+            price: jeu.promotion === 'oui' ? jeu.promotionprice : jeu.price,
+            image: jeu.imageUrl
+          })}
+          className="custom-cart-btn"
+        >
+          Ajouter au panier
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
                 </div>
               </div>
             </div>
@@ -232,7 +281,7 @@ function Jewellery() {
         <div className="container">
           <p className="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html Templates</a></p>
         </div>
-      </div>
+      </div></CartProvider>
     </>
   );
 }

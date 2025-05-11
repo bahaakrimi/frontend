@@ -46,6 +46,26 @@ export const CartProvider = ({ children }) => {
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const passerCommande = async (userData) => {
+  try {
+    const response = await fetch('/api/commandes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: 'ID_UTILISATEUR', // À remplacer par l'ID réel
+        produits: cart,
+        total: totalPrice,
+        informationsLivraison: userData,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la commande:', error);
+  }
+};
 
   return (
     <CartContext.Provider 

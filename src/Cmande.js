@@ -7,11 +7,10 @@ function Commande() {
   const [newCommande, setNewCmd] = useState({
     model: "",
     prix: "",
-    matricule: "",
+    matricule: "", // Valeur par défaut pour nomclient
     email: ""
   });
 
-  // Définir les styles à l'intérieur du composant
   const styles = {
     containerStyle: {
       padding: '30px',
@@ -40,7 +39,7 @@ function Commande() {
       fontSize: '16px',
       cursor: 'pointer',
       transition: '0.3s ease',
-      '&:hover': {
+      ':hover': {
         backgroundColor: '#0056b3',
       }
     },
@@ -55,11 +54,12 @@ function Commande() {
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
-    if (userData && userData.email) {
+    if (userData) {
       setUserEmail(userData.email);
       setNewCmd(prevState => ({
         ...prevState,
-        email: userData.email
+        email: userData.email,
+        matricule: userData.username || "admin" // Utilise le nom d'utilisateur ou "admin" par défaut
       }));
     }
   }, []);
@@ -80,7 +80,7 @@ function Commande() {
       setNewCmd({
         model: "",
         prix: "",
-        matricule: "",
+        matricule: "admin", // Réinitialise avec la valeur par défaut
         email: userEmail
       });
       alert("Commande ajoutée avec succès !");
@@ -95,7 +95,7 @@ function Commande() {
       <input
         type="text"
         name="model"
-        placeholder="Modèle"
+        placeholder="nomproduit"
         style={styles.inputStyle}
         value={newCommande.model}
         onChange={handleChange}
@@ -103,7 +103,7 @@ function Commande() {
       <input
         type="number"
         name="prix"
-        placeholder="Prix"
+        placeholder="nbrproduit"
         style={styles.inputStyle}
         value={newCommande.prix}
         onChange={handleChange}
@@ -111,7 +111,7 @@ function Commande() {
       <input
         type="text"
         name="matricule"
-        placeholder="Matricule"
+        placeholder="nomclient"
         style={styles.inputStyle}
         value={newCommande.matricule}
         onChange={handleChange}

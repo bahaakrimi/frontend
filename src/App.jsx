@@ -9,6 +9,8 @@ import LoginForm from './LoginForm'
 import Sports from './Sports'
 import Jeux from './Jeux'
 import Cmande   from './Cmande'
+import axios from 'axios';
+import './Jeux.css';
 
 import { CartContext } from './context/CartContext';
 import Panier from './Panier'
@@ -29,12 +31,18 @@ import { useCart } from './context/CartContext';
 function App() {
     const { totalItems } = useCart(); // Ajoutez cette ligne
     const { addToCart } = useCart();
+    const [searchTerm, setSearchTerm] = useState('');
+      const [products, setProducts] = useState([]);
+      const [isLoading, setIsLoading] = useState(false);
+      const [searchError, setSearchError] = useState(null);
+
+      
 
     const navigate = useNavigate();
     
     const handleBuyNowClick = () => {
         // Redirection vers la page de paiement
-        navigate('/paypage');
+        navigate('/cmande');
     };
     
     const goToCreationUser = () => {
@@ -42,7 +50,7 @@ function App() {
     };
     
     const [showFashionDropdown, setShowFashionDropdown] = useState(false);
-      const products = [
+      const productsq = [
     {
       id: 1,
       name: "Man T-shirt",
@@ -72,28 +80,57 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchProduits = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/produit/with-images');
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération des produits');
-                }
-                const data = await response.json();
-                setProduits(data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
-        fetchProduits();
-    }, []);
+    
     
 
-    if (loading) return <div className="loading">Chargement en cours...</div>;
-    if (error) return <div className="error">Erreur: {error}</div>;
+    useEffect(() => {
+    const fetchProduits = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/produit/with-images');
+        setProduits(response.data); // On garde tous les produits sans filtre
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchProduits();
+  }, []);
+
+  if (loading) return <div className="loading">Chargement en cours...</div>;
+  if (error) return <div className="error">Erreur: {error}</div>;
+    const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      setSearchError('Veuillez entrer un terme de recherche');
+      return;
+    }
+
+    setIsLoading(true);
+    setSearchError(null);
+    setProducts([]);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/produit/searchProduitByName?name=${encodeURIComponent(searchTerm)}`
+      );
+
+      if (!response.ok) throw new Error('Erreur de recherche');
+
+      const data = await response.json();
+      setProducts(data.produits || []);
+
+      if (!data.produits?.length) {
+        setSearchError('Aucun produit trouvé');
+      }
+    } catch (error) {
+      setSearchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   
     
   return (
@@ -126,6 +163,7 @@ function App() {
           <li><Link to="/Jewellery">Jewellery</Link></li>
           <li><Link to="/Sports">Sports</Link></li>
           <li><Link to="/Jeux">Jeux</Link></li>
+          <li><Link to="/Getcomandlist">Jeux  ppp</Link></li>
         </ul>
       </nav>
              
@@ -164,15 +202,33 @@ function App() {
               </div>
             </div>
             <div class="main">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search this blog" />
-                <div class="input-group-append">
-                  <button class="btn btn-secondary" type="button" >
-                    <i class="fa fa-search"></i>
-                  </button>
+                  <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Rechercher un produit..."
+          style={{ padding: '8px', width: '300px' }}
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <button 
+          onClick={handleSearch} 
+          disabled={isLoading}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: isLoading ? '#ccc' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          <i class="fa fa-search"></i>
+          
+        </button>
+      </div>
+
                 </div>
-              </div>
-            </div>
             <div class="header_box">
               <div class="lang_box ">
                 <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
@@ -242,34 +298,147 @@ function App() {
       </div>
       </div>
       <div className="fashion-section">
-            
-            <div className="produits-container">
-                {produits.map((produit) => (
-                    <div key={produit._id} className="produit-card">
-                        <img 
-                            src={produit.imageUrl} 
-                            alt={produit.name}
-                            className="produit-image"
-                        />
-                        <h3>{produit.name}</h3>
-                        <p className="price">Price ${produit.price}</p>
-                        <div className="button-group">
-                            <button className="buy-now">Buy Now</button>
-                            <button 
-                                className="add-to-cart"
-                                onClick={() => addToCart({
-                                id: produit._id,
-                                name: produit.name,
-                                price: produit.price,
-                                image: produit.imageUrl
-                                })}
-                                >
-                                  Ajouter au panier
-                                </button>
-                        </div>
-                    </div>
-                ))}
+        {searchError && (
+    <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
+)}
+
+<div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '25px',
+    padding: '25px'
+}}>
+    {products.map(product => (
+        <div key={product._id} style={{ 
+            padding: '20px',
+            border: '2px solid #3498db',
+            borderRadius: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            background: '#f8fbfe',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+            {/* En-tête renforcé */}
+            <div style={{ 
+                marginBottom: '20px',
+                textAlign: 'center',
+                lineHeight: '1.4'
+            }}>
+                <h3 style={{ 
+                    margin: '0 0 8px 0', 
+                    fontSize: '1.4rem',
+                    fontWeight: 600,
+                    color: '#2c3e50'
+                }}>
+                    {product.name}
+                </h3>
+                <p style={{ 
+                    margin: 0,
+                    fontSize: '1.3rem',
+                    color: '#e74c3c',
+                    fontWeight: 'bold',
+                    letterSpacing: '0.5px'
+                }}>
+                    {product.price}dt
+                </p>
             </div>
+
+            {/* Image agrandie */}
+            <div style={{ 
+                flexGrow: 1, 
+                marginBottom: '20px',
+                border: '1px solid #ecf0f1',
+                borderRadius: '8px',
+                padding: '10px'
+            }}>
+                <img 
+                    src={product.imageUrl} 
+                    alt={product.name}
+                    style={{ 
+                        width: '100%',
+                        height: '220px',
+                        objectFit: 'contain',
+                        margin: '0 auto',
+                        display: 'block'
+                    }}
+                    onError={(e) => {
+                        e.target.src = `${window.location.origin}/default-product.png`;
+                    }}
+                />
+            </div>
+
+            {/* Bouton élargi */}
+            <div style={{ textAlign: 'center' }}>
+                <button 
+                    onClick={handleBuyNowClick}
+                    style={{
+                        padding: '12px 25px',
+                        backgroundColor: '#3498db',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '1.1rem',
+                        width: '100%',
+                        transition: 'all 0.3s ease',
+                        fontWeight: 500
+                    }}
+                    onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
+                    onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
+                >
+                    Ajouter une commande
+                </button>
+            </div>
+        </div>
+    ))}
+</div>
+        
+            <h1>ALL PRODUCTS</h1>
+            <div className="produits-container">
+        {produits.map(produit => (
+          <div key={produit._id} className={`produit-card ${produit.promotion === 'oui' ? 'promo' : ''}`}>
+            {produit.promotion === 'oui' && (
+              <div className="promo-banner">EN PROMOTION</div>
+            )}
+            
+            <div className="produit-image-container">
+              <img 
+                src={produit.imageUrl} 
+                alt={produit.name}
+                onError={(e) => {
+                  e.target.src = 'http://localhost:5000/files/default-product.png';
+                }}
+              />
+            </div>
+            
+            <div className="produit-info">
+              <h3>{produit.name}</h3>
+              <p className="produit-category">Catégorie: {produit.category}</p>
+              
+              <div className="produit-pricing">
+                {produit.promotion === 'oui' ? (
+                  <>
+                    <span className="original-price">{produit.price} TND</span>
+                    <span className="promo-price">{produit.promotionprice} TND</span>
+                  </>
+                ) : (
+                  <span className="normal-price">{produit.price} TND</span>
+                )}
+              </div>
+              
+              <div className="produit-stock">
+                Disponible: {produit.nbrproduit} unités
+              </div>
+              
+              <div className="produit-actions">
+                <button className="buy-btn">Acheter</button>
+                <Link to={`/produit/${produit._id}`} className="details-btn">Détails</Link>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
         </div>
       
       </CartProvider>

@@ -36,6 +36,7 @@ import Userlist from './Userlist'
 import ProductList from './ProductList'
 import HomePage from './HomePage'
 import PanierPage from './PanierPage'
+import JeuxP  from './JeuxP'
 
 
 import { CartProvider } from './context/CartContext';
@@ -80,6 +81,8 @@ export default function RoutesComponent() {
       <Route path="/Xbox" element={<Xbox/>}></Route>
       <Route path="/Neklesh" element={<Neklesh/>}></Route>
       <Route path="/Women" element={<Women/>}></Route>
+      <Route path="/JeuxP" element={<JeuxP/>}></Route>
+    
 
       <Route path="/Jhumka" element={<Jhumka/>}></Route>
       <Route path="/HandGripDesMains" element={<HandGripDesMains/>}></Route>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllCommande, deleteCommandeById } from './services/ApiCommandes';
+import { getAllCommande, deleteCommandeById, updateCommande } from './services/ApiCommandes';
 
 function GetCommandes() {
   const [commandes, setCommandes] = useState([]);
@@ -31,6 +31,19 @@ function GetCommandes() {
       setError(null);
       await deleteCommandeById(id);
       setCommandes(commandes.filter(commande => commande._id !== id));
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      setError(null);
+      const updatedCommande = await updateCommande(id, { status: newStatus });
+      
+      setCommandes(commandes.map(commande => 
+        commande._id === id ? updatedCommande.data : commande
+      ));
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -78,23 +91,34 @@ function GetCommandes() {
             <thead className="table-dark">
               <tr>
                 <th>Modèle</th>
-                <th>Prix</th>
-                <th>Matricule</th>
+                <th>nombre de pièces  déclarer</th>
+                <th>nomclient</th>
                 <th>Email</th>
                 <th>Date Création</th>
                 <th>Statut</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {commandes.map((commande) => (
                 <tr key={commande._id}>
                   <td>{commande.model}</td>
-                  <td>{commande.prix} €</td>
+                  <td>{commande.prix} pièces</td>
                   <td>{commande.matricule}</td>
                   <td>{commande.email}</td>
                   <td>{new Date(commande.createdAt).toLocaleDateString()}</td>
-                  <td>{commande.status || 'En attente'}</td>
+                  <td>
+                    <select
+                      className="form-select form-select-sm"
+                      value={commande.status || 'en_attente'}
+                      onChange={(e) => handleStatusChange(commande._id, e.target.value)}
+                    >
+                      <option value="en_attente">En attente</option>
+                      <option value="en_traitement">En traitement</option>
+                      <option value="livre">Livré</option>
+                      <option value="annulé">Annulé</option>
+                    </select>
+                  </td>
                   <td>
                     <button
                       className="btn btn-danger btn-sm"

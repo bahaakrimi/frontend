@@ -10,7 +10,9 @@ const ProduitManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
+    promotionprice: '',
     category: '',
+    promotion: '',
     nbrproduit: '',
     image: null
   });
@@ -51,7 +53,9 @@ const ProduitManager = () => {
     setFormData({
       name: produit.name,
       price: produit.price,
+      promotionprice: produit.promotionprice,
       category: produit.category,
+      promotion: produit.promotion,
       nbrproduit: produit.nbrproduit,
       image: null
     });
@@ -62,7 +66,13 @@ const ProduitManager = () => {
   const cancelEdit = () => {
     setEditingId(null);
     setFormData({
-      name: '', price: '', category: '', nbrproduit: '', image: null
+      name: '', 
+      price: '', 
+      promotionprice: '',
+      category: '', 
+      promotion: '', 
+      nbrproduit: '', 
+      image: null
     });
     setPreviewImage(null);
   };
@@ -73,7 +83,9 @@ const ProduitManager = () => {
     const data = new FormData();
     data.append('name', formData.name);
     data.append('price', formData.price);
+    data.append('promotionprice', formData.promotionprice);
     data.append('category', formData.category);
+    data.append('promotion', formData.promotion);
     data.append('nbrproduit', formData.nbrproduit);
     if (formData.image) data.append('image_produit', formData.image);
 
@@ -180,6 +192,30 @@ const ProduitManager = () => {
           </div>
           
           <div className="form-group">
+            <label>Prix promotionnel:</label>
+            <input 
+              type="number" 
+              name="promotionprice" 
+              value={formData.promotionprice} 
+              onChange={handleChange} 
+              min="0" 
+              step="0.01" 
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Promotion (%):</label>
+            <input 
+              type="text" 
+              name="promotion" 
+              value={formData.promotion} 
+              onChange={handleChange} 
+              min="0" 
+              max="100" 
+            />
+          </div>
+          
+          <div className="form-group">
             <label>Catégorie:</label>
             <input 
               type="text" 
@@ -238,39 +274,55 @@ const ProduitManager = () => {
       <div className="produit-list">
         <h2>Nos produits</h2>
         <div className="produit-grid">
-          {produits.map(produit => (
-            <div key={produit._id} className="produit-card">
-              <div className="produit-image-container">
-                <img 
-                  src={produit.imageUrl} 
-                  alt={produit.name}
-                  onError={(e) => {
-                    e.target.src = 'http://localhost:5000/files/default-product.png';
-                  }}
-                />
+          {produits.map(produit => {
+            const displayPrice = produit.promotionprice || produit.price;
+            
+            return (
+              <div key={produit._id} className="produit-card">
+                <div className="produit-image-container">
+                  <img 
+                    src={produit.imageUrl} 
+                    alt={produit.name}
+                    onError={(e) => {
+                      e.target.src = 'http://localhost:5000/files/default-product.png';
+                    }}
+                  />
+                  {produit.promotion > 0 && (
+                    <div className="promo-badge">-{produit.promotion}%</div>
+                  )}
+                </div>
+                <div className="produit-info">
+                  <h3>{produit.name}</h3>
+                  <div className="price-container">
+                    {produit.promotionprice ? (
+                      <>
+                        <span className="original-price">${produit.price}</span>
+                        <span className="promo-price">${produit.promotionprice}</span>
+                      </>
+                    ) : (
+                      <span>${produit.price}</span>
+                    )}
+                  </div>
+                  <p>Catégorie: {produit.category}</p>
+                  <p>Stock: {produit.nbrproduit}</p>
+                </div>
+                <div className="produit-actions">
+                  <button 
+                    className="btn btn-warning"
+                    onClick={() => handleEdit(produit)}
+                  >
+                    Modifier
+                  </button>
+                  <button 
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(produit._id)}
+                  >
+                    Supprimer
+                  </button>
+                </div>
               </div>
-              <div className="produit-info">
-                <h3>{produit.name}</h3>
-                <p>Prix: ${produit.price}</p>
-                <p>Catégorie: {produit.category}</p>
-                <p>Stock: {produit.nbrproduit}</p>
-              </div>
-              <div className="produit-actions">
-                <button 
-                  className="btn btn-warning"
-                  onClick={() => handleEdit(produit)}
-                >
-                  Modifier
-                </button>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(produit._id)}
-                >
-                  Supprimer
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
