@@ -14,3 +14,9 @@ export async function deleteProduit(id) {
 export async function updateProduit(userData,idUser) {
     return await axios.put(`${apiurl}/updateProduit/${idUser}`,userData)
 }
+// Ajoutez cette nouvelle fonction pour le filtrage par prix
+export async function filterProduitsByPrice(minPrice, maxPrice) {
+    return await axios.get(`${apiurl}/filter`, {
+        params: { minPrice, maxPrice }
+    });
+}

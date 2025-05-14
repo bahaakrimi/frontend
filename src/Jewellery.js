@@ -6,6 +6,7 @@ import { CartProvider } from './context/CartContext';
 import { useCart } from './context/CartContext';
 import axios from 'axios';
 import './Jeux.css';
+import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
 function Jewellery() {
   const { totalItems } = useCart(); // Ajoutez cette ligne
@@ -51,6 +52,38 @@ function Jewellery() {
 
   // Filtrer les produits de la catégorie "jewellery"
   const jewelleryProduits = produits.filter(produit => produit.category === 'jewellery');
+  // Style JSX intégré
+  const styles = {
+    banner: {
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: '#f8f8f8',
+      fontFamily: 'Arial, sans-serif',
+      margin: '20px 0',
+      borderRadius: '8px',
+    },
+    title: {
+      margin: '0 0 15px 0',
+      color: '#333',
+      fontSize: '24px',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
+    },
+    iconsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '25px',
+    },
+    icon: {
+      fontSize: '32px',
+      color: '#555',
+      transition: 'color 0.3s ease',
+      cursor: 'pointer',
+    },
+    iconHover: {
+      color: '#000',
+    },
+  };
 
   return (
         <><CartProvider>
@@ -257,14 +290,57 @@ function Jewellery() {
         </div>
       </div>
 
-      <div className="footer_section layout_padding">
-        <div className="container">
-          <div className="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png" alt="footer logo"/></a></div>
-          <div className="input_bt">
-            <input type="text" className="mail_bt" placeholder="Your Email" name="Your Email"/>
-            <span className="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+      
+      
+      <div class="footer_section layout_padding">
+        <div class="container">
+          <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
+          <div class="input_bt">
+            <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email"/>
+            <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
           </div>
-          <div className="footer_menu">
+          <div style={styles.banner}>
+                <h2 style={styles.title}>RETROUVEZ-NOUS SUR</h2>
+                <div style={styles.iconsContainer}>
+                  <a 
+                    href="https://www.instagram.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaInstagram 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#E1306C'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                  
+                  <a 
+                    href="mailto:bahaakrimi145@gmail.com"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaEnvelope 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#D44638'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                  
+                  <a 
+                    href="https://www.facebook.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaFacebook 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#4267B2'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                </div>
+              </div>
+          <div class="footer_menu">
             <ul>
               <li><a href="#">Best Sellers</a></li>
               <li><a href="#">Gift Ideas</a></li>
@@ -273,13 +349,7 @@ function Jewellery() {
               <li><a href="#">Customer Service</a></li>
             </ul>
           </div>
-          <div className="location_main">Help Line Number : <a href="#">+1 1800 1200 1200</a></div>
-        </div>
-      </div>
-      
-      <div className="copyright_section">
-        <div className="container">
-          <p className="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html Templates</a></p>
+          <div class="location_main">Help Line Number : <a href="#">+216 123 456 78</a></div>
         </div>
       </div></CartProvider>
     </>

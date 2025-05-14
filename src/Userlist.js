@@ -212,7 +212,7 @@ function UserManagement() {
               <tr>
                 <th>Nom</th>
                 <th>Email</th>
-                <th>Âge</th>
+                <th>tel</th>
                 <th>Rôle</th>
                 <th>Actions</th>
               </tr>

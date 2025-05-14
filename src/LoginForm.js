@@ -1,116 +1,170 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import CreationUser from './CreationUser'
+import CreationUser from './CreationUser';
 import { login } from "./services/ApiUser";
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [newAccount , setNewAccount] = useState({
-    email :"",password:""
-  })
+  const [newAccount, setNewAccount] = useState({
+    email: "",
+    password: ""
+  });
+
   const handleChange = (e) => {
-    const { name , value } = e.target;
-    setNewAccount({...newAccount , [name]: value})
-  }
+    const { name, value } = e.target;
+    setNewAccount({...newAccount, [name]: value});
+  };
+
   const login2 = async () => {
     try {
-
       const res = await login(newAccount);
-      console.log("res" , res);
-      localStorage.setItem("user", JSON.stringify(res.data.user)); // Sauvegarde les infos dans localStorage
-      if(res.data.user.role === "client"){
+      console.log("res", res);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if(res.data.user.role === "client") {
         navigate('/App');
-      }else{
+      } else {
         navigate('/GetProduit');
-        
       }
     } catch (error) {
       console.error("Erreur de connexion :", error);
     }
   };
-  // 🎨 Styles CSS
+
+  // Styles CSS pour correspondre à l'image
   const containerStyle = {
-    padding: '30px',
-    maxWidth: '500px',
-    margin: '0 auto',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '10px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    backgroundColor: '#FFD700',
     display: 'flex',
     flexDirection: 'column',
-    gap: '15px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    backgroundColor: '#f8f9fa',
+    fontFamily: 'Arial, sans-serif',
+  };
+
+  const loginBoxStyle = {
+    width: '350px',
+    padding: '40px',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+    textAlign: 'center',
+  };
+
+  const titleStyle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    marginBottom: '30px',
+    color: '#333',
   };
 
   const inputStyle = {
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
+    width: '100%',
+    padding: '12px 15px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+    border: '1px solid #ddd',
+    fontSize: '14px',
+    boxSizing: 'border-box',
   };
 
-  const buttonStyle = {
-    backgroundColor: '#007bff',
+  const passwordInputStyle = {
+    ...inputStyle,
+    marginBottom: '10px',
+  };
+
+  const signInButtonStyle = {
+    width: '100%',
+    padding: '12px',
+    backgroundColor: '#4a67ff',
     color: 'white',
-    padding: '10px',
-    borderRadius: '6px',
     border: 'none',
-    fontWeight: 'bold',
+    borderRadius: '5px',
     fontSize: '16px',
+    fontWeight: 'bold',
     cursor: 'pointer',
-    transition: '0.3s ease',
-  };
-
-  const buttonHoverStyle = {
-    ...buttonStyle,
-    backgroundColor: '#0056b3',
-  };
-
-  const linkStyle = {
-    textAlign: 'center',
     marginTop: '10px',
-    color: '#007bff',
+    marginBottom: '20px',
+    transition: 'background-color 0.3s',
+  };
+
+  const signInButtonHoverStyle = {
+    backgroundColor: '#3a56e0',
+  };
+
+  const dividerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    margin: '20px 0',
+    color: '#999',
+  };
+
+  const lineStyle = {
+    flex: '1',
+    height: '1px',
+    backgroundColor: '#ddd',
+  };
+
+  const orTextStyle = {
+    padding: '0 10px',
+  };
+
+  const registerLinkStyle = {
+    display: 'block',
+    color: '#4a67ff',
     textDecoration: 'none',
     fontWeight: 'bold',
+    marginTop: '10px',
   };
 
+  const brandStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: '30px',
+  };
 
   return (
     <div style={containerStyle}>
-      <h2>Connexion</h2>
-      <form>
+      <div style={brandStyle}></div>
+      <div style={loginBoxStyle}>
+        <div style={titleStyle}>Login</div>
+        
         <input
           type="email"
           placeholder="Email"
           name="email"
           onChange={handleChange}
           style={inputStyle}
-          
+        />
         
-
-          
-        /><br></br>
-        <br></br>
         <input
           type="password"
-          placeholder="Mot de passe"
+          placeholder="Password"
           name="password"
           onChange={handleChange}
-          style={inputStyle}
-    
-    
-  
-        /><br></br>
+          style={passwordInputStyle}
+        />
+        
         <button
-        style={buttonStyle}
-        type="button"
-        onClick={()=>{login2(newAccount)}}
+          style={signInButtonStyle}
+          type="button"
+          onClick={login2}
+          onMouseEnter={(e) => e.target.style.backgroundColor = signInButtonHoverStyle.backgroundColor}
+          onMouseLeave={(e) => e.target.style.backgroundColor = signInButtonStyle.backgroundColor}
         >
-          Se connecter
+          Sign In
         </button>
-      </form>
-      <Link to="/CreationUser" style={linkStyle}>CreationUser</Link>
-      
+        
+        <div style={dividerStyle}>
+          <div style={lineStyle}></div>
+          <div style={orTextStyle}>OR</div>
+          <div style={lineStyle}></div>
+        </div>
+        
+        <Link to="/CreationUser" style={registerLinkStyle}>Register To Create Account</Link>
+      </div>
     </div>
   );
 };

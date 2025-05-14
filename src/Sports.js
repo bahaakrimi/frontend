@@ -5,6 +5,7 @@ import LoginForm from './LoginForm';
 import { CartProvider } from './context/CartContext';
 import { useCart } from './context/CartContext';
 import axios from 'axios';
+import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
 
 function Sports() {
@@ -51,7 +52,38 @@ function Sports() {
 
   // Filtrer les produits de la catégorie "sport"
   const sportProduits = produits.filter(produit => produit.category === 'sport');
-
+// Style JSX intégré
+  const styles = {
+    banner: {
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: '#f8f8f8',
+      fontFamily: 'Arial, sans-serif',
+      margin: '20px 0',
+      borderRadius: '8px',
+    },
+    title: {
+      margin: '0 0 15px 0',
+      color: '#333',
+      fontSize: '24px',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
+    },
+    iconsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '25px',
+    },
+    icon: {
+      fontSize: '32px',
+      color: '#555',
+      transition: 'color 0.3s ease',
+      cursor: 'pointer',
+    },
+    iconHover: {
+      color: '#000',
+    },
+  };
   return (
 <><CartProvider>
         <div class="banner_bg_main">
@@ -99,8 +131,7 @@ function Sports() {
                 </div>
                 <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
                 <div class="dropdown">
-                  <Link to="/Cmande"><button  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Command
-                  </button></Link>
+                  
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="#">Action</a>
                     <a class="dropdown-item" href="#">Another action</a>
@@ -264,7 +295,6 @@ function Sports() {
           </a>
         </div>
       </div>
-
       <div class="footer_section layout_padding">
         <div class="container">
           <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
@@ -272,6 +302,47 @@ function Sports() {
             <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email"/>
             <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
           </div>
+          <div style={styles.banner}>
+                <h2 style={styles.title}>RETROUVEZ-NOUS SUR</h2>
+                <div style={styles.iconsContainer}>
+                  <a 
+                    href="https://www.instagram.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaInstagram 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#E1306C'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                  
+                  <a 
+                    href="mailto:bahaakrimi145@gmail.com"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaEnvelope 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#D44638'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                  
+                  <a 
+                    href="https://www.facebook.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaFacebook 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#4267B2'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                </div>
+              </div>
           <div class="footer_menu">
             <ul>
               <li><a href="#">Best Sellers</a></li>
@@ -281,15 +352,14 @@ function Sports() {
               <li><a href="#">Customer Service</a></li>
             </ul>
           </div>
-          <div class="location_main">Help Line Number : <a href="#">+1 1800 1200 1200</a></div>
+          <div class="location_main">Help Line Number : <a href="#">+216 123 456 78</a></div>
         </div>
       </div>
+
       
-      <div class="copyright_section">
-        <div class="container">
-          <p class="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html Templates</a></p>
-        </div>
-      </div></CartProvider>
+     
+      
+      </CartProvider>
     </>
   );
 }

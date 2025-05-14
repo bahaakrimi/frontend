@@ -7,50 +7,9 @@ function Commande() {
   const [newCommande, setNewCmd] = useState({
     model: "",
     prix: "",
-    matricule: "", // Valeur par défaut pour nomclient
+    matricule: "",
     email: ""
   });
-
-  const styles = {
-    containerStyle: {
-      padding: '30px',
-      maxWidth: '500px',
-      margin: '0 auto',
-      backgroundColor: '#f5f5f5',
-      borderRadius: '10px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '15px',
-    },
-    inputStyle: {
-      padding: '10px',
-      borderRadius: '6px',
-      border: '1px solid #ccc',
-      fontSize: '16px',
-    },
-    buttonStyle: {
-      backgroundColor: '#007bff',
-      color: 'white',
-      padding: '10px',
-      borderRadius: '6px',
-      border: 'none',
-      fontWeight: 'bold',
-      fontSize: '16px',
-      cursor: 'pointer',
-      transition: '0.3s ease',
-      ':hover': {
-        backgroundColor: '#0056b3',
-      }
-    },
-    linkStyle: {
-      textAlign: 'center',
-      marginTop: '10px',
-      color: '#007bff',
-      textDecoration: 'none',
-      fontWeight: 'bold',
-    }
-  };
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -59,7 +18,7 @@ function Commande() {
       setNewCmd(prevState => ({
         ...prevState,
         email: userData.email,
-        matricule: userData.username || "admin" // Utilise le nom d'utilisateur ou "admin" par défaut
+        matricule: userData.username || "admin"
       }));
     }
   }, []);
@@ -80,7 +39,7 @@ function Commande() {
       setNewCmd({
         model: "",
         prix: "",
-        matricule: "admin", // Réinitialise avec la valeur par défaut
+        matricule: newCommande.matricule, // Garde la même valeur pour matricule
         email: userEmail
       });
       alert("Commande ajoutée avec succès !");
@@ -90,48 +49,132 @@ function Commande() {
     }
   };
 
+  // Styles cohérents avec les autres formulaires
+  const containerStyle = {
+
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    backgroundColor: '#f8f9fa',
+    fontFamily: 'Arial, sans-serif',
+  };
+
+  const loginBoxStyle = {
+    width: '350px',
+    padding: '40px',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+    textAlign: 'center',
+  };
+
+  const titleStyle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    marginBottom: '30px',
+    color: '#333',
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 15px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+    border: '1px solid #ddd',
+    fontSize: '14px',
+    boxSizing: 'border-box',
+  };
+
+  const buttonStyle = {
+    width: '100%',
+    padding: '12px',
+    backgroundColor: '#4a67ff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    marginTop: '10px',
+    marginBottom: '20px',
+    transition: 'background-color 0.3s',
+  };
+
+  const buttonHoverStyle = {
+    backgroundColor: '#3a56e0',
+  };
+
+  const linkStyle = {
+    display: 'block',
+    color: '#4a67ff',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    marginTop: '10px',
+  };
+
+  const brandStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: '30px',
+  };
+
   return (
-    <div style={styles.containerStyle}>
-      <input
-        type="text"
-        name="model"
-        placeholder="nomproduit"
-        style={styles.inputStyle}
-        value={newCommande.model}
-        onChange={handleChange}
-      />
-      <input
-        type="number"
-        name="prix"
-        placeholder="nbrproduit"
-        style={styles.inputStyle}
-        value={newCommande.prix}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="matricule"
-        placeholder="nomclient"
-        style={styles.inputStyle}
-        value={newCommande.matricule}
-        onChange={handleChange}
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        style={styles.inputStyle}
-        value={newCommande.email}
-        onChange={handleChange}
-        readOnly={!!userEmail}
-      />
-      <button
-        onClick={AddNewCommande}
-        style={styles.buttonStyle}
-      >
-        Ajouter une commande
-      </button>
-      <Link to="/PayPage" style={styles.linkStyle}>Acheter</Link>
+    <div style={containerStyle}>
+      <div style={brandStyle}></div>
+      <div style={loginBoxStyle}>
+        <div style={titleStyle}>Nouvelle Commande</div>
+        
+        <input
+          type="text"
+          name="model"
+          placeholder="Modèle du produit"
+          style={inputStyle}
+          value={newCommande.model}
+          onChange={handleChange}
+        />
+        
+        <input
+          type="number"
+          name="prix"
+          placeholder="Prix"
+          style={inputStyle}
+          value={newCommande.prix}
+          onChange={handleChange}
+        />
+        
+        <input
+          type="text"
+          name="matricule"
+          placeholder="Nom du client"
+          style={inputStyle}
+          value={newCommande.matricule}
+          onChange={handleChange}
+        />
+        
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          style={inputStyle}
+          value={newCommande.email}
+          onChange={handleChange}
+          readOnly={!!userEmail}
+        />
+        
+        <button
+          onClick={AddNewCommande}
+          style={buttonStyle}
+          onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
+          onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
+        >
+          Ajouter la commande
+        </button>
+        
+        <Link to="/PayPage" style={linkStyle}>Procéder au paiement</Link>
+      </div>
     </div>
   );
 }

@@ -21,7 +21,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { useCart } from './context/CartContext';
-
+import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
 
 
@@ -35,6 +35,38 @@ function App() {
       const [products, setProducts] = useState([]);
       const [isLoading, setIsLoading] = useState(false);
       const [searchError, setSearchError] = useState(null);
+    
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const params = {};
+      if (minPrice) params.minPrice = minPrice;
+      if (maxPrice) params.maxPrice = maxPrice;
+
+      const response = await axios.get('http://localhost:5000/produit/filter', { params });
+      setProducts(response.data);
+    } catch (err) {
+      setError('Erreur lors du chargement des produits');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleFilter = (e) => {
+    e.preventDefault();
+    fetchProducts();
+  };
 
       
 
@@ -129,6 +161,38 @@ function App() {
       setIsLoading(false);
     }
   };
+  const styles = {
+    banner: {
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: '#f8f8f8',
+      fontFamily: 'Arial, sans-serif',
+      margin: '20px 0',
+      borderRadius: '8px',
+    },
+    title: {
+      margin: '0 0 15px 0',
+      color: '#333',
+      fontSize: '24px',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
+    },
+    iconsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '25px',
+    },
+    icon: {
+      fontSize: '32px',
+      color: '#555',
+      transition: 'color 0.3s ease',
+      cursor: 'pointer',
+    },
+    iconHover: {
+      color: '#000',
+    },
+  };
+
 
 
   
@@ -163,7 +227,7 @@ function App() {
           <li><Link to="/Jewellery">Jewellery</Link></li>
           <li><Link to="/Sports">Sports</Link></li>
           <li><Link to="/Jeux">Jeux</Link></li>
-          <li><Link to="/Getcomandlist">Jeux  ppp</Link></li>
+          <li><Link to="/JeuxP">Meilleures ventes</Link></li>
         </ul>
       </nav>
              
@@ -183,6 +247,44 @@ function App() {
         </div>
       </div>
       <div class="header_section">
+
+        <div style={{ backgroundColor: '#FFD700', padding: '20px', borderRadius: '8px' }}>
+  <h2 style={styles.title}>Filtrer par prix</h2>
+  <form onSubmit={handleFilter} style={styles.filterForm}>
+    <div style={styles.inputGroup}>
+      <label style={styles.label}>Prix minimum (TND):</label>
+      <input
+        type="number"
+        value={minPrice}
+        onChange={(e) => setMinPrice(Number(e.target.value))}
+        style={styles.input}
+        min="0"
+        placeholder="0"  // Valeur par défaut implicite
+      />
+    </div>
+    
+    <div style={styles.inputGroup}>
+      <label style={styles.label}>Prix maximum (TND):</label>
+      <input
+        type="number"
+        value={maxPrice}  // Affiche vide si undefined/null/0
+        onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : null)}
+        style={styles.input}
+        min="0"
+        placeholder="0" 
+         
+      />
+    </div>
+    
+    <button 
+      type="submit" 
+      style={styles.filterButton}
+      disabled={loading}
+    >
+      {loading ? 'Filtrage...' : 'Filtrer'}
+    </button>
+  </form>
+</div>
         <div class="container">
           <div class="containt_main">
             <div id="mySidenav" class="sidenav">
@@ -191,10 +293,10 @@ function App() {
               <a href="Electronic">Electronics</a>
               
             </div>
-            <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
+            
             <div class="dropdown">
-              <Link to="/Cmande"><button  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Command
-              </button></Link>
+              
+              
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" href="#">Action</a>
                 <a class="dropdown-item" href="#">Another action</a>
@@ -204,13 +306,21 @@ function App() {
             <div class="main">
                   <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
         <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Rechercher un produit..."
-          style={{ padding: '8px', width: '300px' }}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-        />
+  type="text"
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  placeholder="Rechercher un produit..."
+  style={{ 
+    padding: '12px 20px',
+    width: '600px',
+    borderRadius: '24px',
+    border: '1px solid #dfe1e5',
+    fontSize: '16px',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+    outline: 'none'
+  }}
+  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+/>
         <button 
           onClick={handleSearch} 
           disabled={isLoading}
@@ -297,8 +407,15 @@ function App() {
         </div>
       </div>
       </div>
+      
+      
+
+
+
       <div className="fashion-section">
-        {searchError && (
+        
+       {error && <p style={styles.error}>{error}</p>}
+{searchError && (
     <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
 )}
 
@@ -317,8 +434,24 @@ function App() {
             flexDirection: 'column',
             height: '100%',
             background: '#f8fbfe',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            position: 'relative'
         }}>
+            {/* Badge de promotion */}
+            {product.promotionprice && (
+                <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    backgroundColor: '#e74c3c',
+                    color: 'white',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold'
+                }}>EN PROMOTION</div>
+            )}
+            
             {/* En-tête renforcé */}
             <div style={{ 
                 marginBottom: '20px',
@@ -333,15 +466,30 @@ function App() {
                 }}>
                     {product.name}
                 </h3>
-                <p style={{ 
+                
+                <div style={{ 
                     margin: 0,
                     fontSize: '1.3rem',
                     color: '#e74c3c',
                     fontWeight: 'bold',
                     letterSpacing: '0.5px'
                 }}>
-                    {product.price}dt
-                </p>
+                    {product.promotionprice ? (
+                        <>
+                            <span style={{ 
+                                textDecoration: 'line-through',
+                                color: '#95a5a6',
+                                marginRight: '10px',
+                                fontSize: '1rem'
+                            }}>
+                                {product.price} TND
+                            </span>
+                            {product.promotionprice} TND
+                        </>
+                    ) : (
+                        <span>{product.price} TND</span>
+                    )}
+                </div>
             </div>
 
             {/* Image agrandie */}
@@ -363,13 +511,27 @@ function App() {
                         display: 'block'
                     }}
                     onError={(e) => {
-                        e.target.src = `${window.location.origin}/default-product.png`;
+                        e.target.src = 'http://localhost:5000/files/default-product.png';
                     }}
                 />
             </div>
+            
+            {/* Information sur le stock */}
+            <p style={{ 
+                margin: '0 0 15px 0',
+                textAlign: 'center',
+                color: '#7f8c8d',
+                fontSize: '0.9rem'
+            }}>
+                Disponible: {product.nbrproduit} unités
+            </p>
 
-            {/* Bouton élargi */}
-            <div style={{ textAlign: 'center' }}>
+            {/* Boutons */}
+            <div style={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+            }}>
                 <button 
                     onClick={handleBuyNowClick}
                     style={{
@@ -379,7 +541,7 @@ function App() {
                         border: 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
-                        fontSize: '1.1rem',
+                        fontSize: '1rem',
                         width: '100%',
                         transition: 'all 0.3s ease',
                         fontWeight: 500
@@ -389,57 +551,93 @@ function App() {
                 >
                     Ajouter une commande
                 </button>
+                
+                <button 
+        
+          onClick={() => addToCart({
+            id: product._id,
+            name: product.name,
+            price: product.promotion === 'oui' ? product.promotionprice : product.price,
+            image: product.imageUrl
+          })}
+          className="custom-cart-btn"
+        >
+          Ajouter au panier
+        </button>
             </div>
         </div>
     ))}
 </div>
         
-            <h1>ALL PRODUCTS</h1>
-            <div className="produits-container">
-        {produits.map(produit => (
-          <div key={produit._id} className={`produit-card ${produit.promotion === 'oui' ? 'promo' : ''}`}>
-            {produit.promotion === 'oui' && (
-              <div className="promo-banner">EN PROMOTION</div>
-            )}
-            
-            <div className="produit-image-container">
-              <img 
-                src={produit.imageUrl} 
-                alt={produit.name}
-                onError={(e) => {
-                  e.target.src = 'http://localhost:5000/files/default-product.png';
-                }}
-              />
-            </div>
-            
-            <div className="produit-info">
-              <h3>{produit.name}</h3>
-              <p className="produit-category">Catégorie: {produit.category}</p>
-              
-              <div className="produit-pricing">
-                {produit.promotion === 'oui' ? (
-                  <>
-                    <span className="original-price">{produit.price} TND</span>
-                    <span className="promo-price">{produit.promotionprice} TND</span>
-                  </>
-                ) : (
-                  <span className="normal-price">{produit.price} TND</span>
-                )}
-              </div>
-              
-              <div className="produit-stock">
-                Disponible: {produit.nbrproduit} unités
-              </div>
-              
-              <div className="produit-actions">
-                <button className="buy-btn">Acheter</button>
-                <Link to={`/produit/${produit._id}`} className="details-btn">Détails</Link>
-              </div>
-            </div>
+
+    </div>
+
+
+
+
+    <div class="footer_section layout_padding">
+        <div class="container">
+          <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
+          <div class="input_bt">
+            <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email"/>
+            <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
           </div>
-        ))}
-      </div>
+          <div style={styles.banner}>
+                <h2 style={styles.title}>RETROUVEZ-NOUS SUR</h2>
+                <div style={styles.iconsContainer}>
+                  <a 
+                    href="https://www.instagram.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaInstagram 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#E1306C'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                  
+                  <a 
+                    href="mailto:bahaakrimi145@gmail.com"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaEnvelope 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#D44638'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                  
+                  <a 
+                    href="https://www.facebook.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit' }}
+                  >
+                    <FaFacebook 
+                      style={styles.icon} 
+                      onMouseEnter={(e) => e.target.style.color = '#4267B2'} 
+                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                    />
+                  </a>
+                </div>
+              </div>
+          <div class="footer_menu">
+            <ul>
+              <li><a href="#">Best Sellers</a></li>
+              <li><a href="#">Gift Ideas</a></li>
+              <li><a href="#">New Releases</a></li>
+              <li><a href="#">Today's Deals</a></li>
+              <li><a href="#">Customer Service</a></li>
+            </ul>
+          </div>
+          <div class="location_main">Help Line Number : <a href="#">+216 123 456 78</a></div>
         </div>
+      </div>
+            
+        
+     
       
       </CartProvider>
           
@@ -448,5 +646,143 @@ function App() {
       
   );
 }
+// Styles
+const styles = {
+  container: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif'
+  },
+  filterContainer: {
+    backgroundColor: '#f5f5f5',
+    padding: '20px',
+    borderRadius: '8px',
+    marginBottom: '30px'
+  },
+  title: {
+    color: '#333',
+    marginBottom: '20px'
+  },
+  filterForm: {
+    display: 'flex',
+    gap: '20px',
+    alignItems: 'flex-end',
+    flexWrap: 'wrap'
+  },
+  inputGroup: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  label: {
+    marginBottom: '8px',
+    fontWeight: '600'
+  },
+  input: {
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    width: '150px'
+  },
+  filterButton: {
+    padding: '10px 20px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: '600'
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center'
+  },
+  productsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '20px'
+  },
+  productCard: {
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    padding: '15px',
+    position: 'relative',
+    transition: 'transform 0.3s',
+    ':hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+    }
+  },
+  promotionBadge: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    backgroundColor: '#e74c3c',
+    color: 'white',
+    padding: '5px 10px',
+    borderRadius: '4px',
+    fontSize: '0.8rem',
+    fontWeight: 'bold'
+  },
+  productImage: {
+    width: '100%',
+    height: '180px',
+    objectFit: 'contain',
+    marginBottom: '15px',
+    borderRadius: '4px'
+  },
+  productName: {
+    margin: '0 0 10px 0',
+    fontSize: '1.2rem',
+    color: '#333'
+  },
+  priceContainer: {
+    marginBottom: '10px'
+  },
+  price: {
+    fontSize: '1.3rem',
+    fontWeight: 'bold',
+    color: '#2c3e50'
+  },
+  originalPrice: {
+    fontSize: '1rem',
+    color: '#95a5a6',
+    textDecoration: 'line-through',
+    marginRight: '10px'
+  },
+  discountedPrice: {
+    fontSize: '1.3rem',
+    fontWeight: 'bold',
+    color: '#e74c3c'
+  },
+  stock: {
+    color: '#27ae60',
+    marginBottom: '15px'
+  },
+  buttonGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px'
+  },
+  orderButton: {
+    padding: '8px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  },
+  cartButton: {
+    padding: '8px',
+    backgroundColor: '#2ecc71',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  },
+  
+};
+
+
 
 export default App;
