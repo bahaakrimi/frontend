@@ -1,151 +1,81 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { CartProvider, useCart } from './context/CartContext';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-function Jeux() {
-  const { totalItems, addToCart } = useCart();
-  const navigate = useNavigate();
-  const [produits, setProduits] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredProduits, setFilteredProduits] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
+const ProductFeedbackForm = () => {
+  const { productId } = useParams();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchProduits = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/produit/with-images?category=jeux');
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des produits');
-        }
-        const data = await response.json();
-        setProduits(data);
-        setFilteredProduits(data); // Initialiser avec tous les produits jeux
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduits();
-  }, []);
-
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
-      setFilteredProduits(produits); // Si recherche vide, afficher tous les jeux
-      setIsSearching(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (rating < 1 || rating > 5) {
+      setError('Please select a rating between 1 and 5');
       return;
     }
 
-    setIsSearching(true);
-    const filtered = produits.filter(produit =>
-      produit.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProduits(filtered);
-  };
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
 
-  const handleBuyNowClick = () => {
-    navigate('/cmande');
-  };
+    try {
+      const token = localStorage.getItem('token'); // Assuming you store JWT token in localStorage
+      const response = await axios.post(
+        `http://localhost:5000/produit/addFeedback/${productId}`,
+        { rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-  const goToCreationUser = () => {
-    navigate('/LoginForm');
+      setMessage(response.data.message);
+      setRating(0);
+      setComment('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error submitting feedback');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  if (loading) return <div>Chargement en cours...</div>;
-  if (error) return <div>Erreur: {error}</div>;
 
   return (
-    <CartProvider>
-      {/* Header et bannière inchangés */}
-      <div class="banner_bg_main">
-        {/* ... code existant ... */}
-      </div>
+    <div className="feedback-form">
+      <h3>Leave Your Feedback</h3>
+      
+      {message && <div className="alert alert-success">{message}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <div class="fashion_section">
-        <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <div class="container">
-                <h1 class="fashion_taital">Jeux</h1>
-                <div class="search-container" style={{ marginBottom: '20px' }}>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Rechercher un jeu..."
-                    style={{ padding: '8px', width: '300px' }}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                  <button 
-                    onClick={handleSearch}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: '#007bff',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      marginLeft: '10px'
-                    }}
-                  >
-                    Rechercher
-                  </button>
-                </div>
-
-                {isSearching && filteredProduits.length === 0 && (
-                  <p style={{ color: 'red' }}>Aucun jeu trouvé avec ce terme de recherche</p>
-                )}
-
-                <div class="fashion_section_2">
-                  <div class="row">
-                    {filteredProduits.map((produit) => (
-                      <div class="col-lg-4 col-sm-4" key={produit._id}>
-                        <div class="box_main">
-                          <h4 class="shirt_text">{produit.name}</h4>
-                          <p class="price_text">Prix <span style={{ color: "#262626" }}>{produit.price}€</span></p>
-                          <div class="electronic_img">
-                            <img src={produit.imageUrl} alt={produit.name} />
-                          </div>
-                          <div class="btn_main">
-                            <div class="buy_bt">
-                              <button onClick={handleBuyNowClick}>
-                                Ajouter une commande
-                              </button>
-                            </div>
-                            <div class="seemore_bt">
-                              <button 
-                                className="add-to-cart"
-                                onClick={() => addToCart({
-                                  id: produit._id,
-                                  name: produit.name,
-                                  price: produit.price,
-                                  image: produit.imageUrl
-                                })}
-                              >
-                                Ajouter au panier
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div className="rating-stars mb-3">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className={`star ${star <= rating ? 'filled' : ''}`}
+              onClick={() => setRating(star)}
+              style={{ cursor: 'pointer', fontSize: '24px' }}
+            >
+              {star <= rating ? '★' : '☆'}
+            </span>
+          ))}
+          <span className="ms-2">{rating}/5</span>
         </div>
-      </div>
-
-      {/* Footer inchangé */}
-      <div class="footer_section layout_padding">
-        {/* ... code existant ... */}
-      </div>
-    </CartProvider>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isSubmitting || rating === 0}
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+        </button>
+      </form>
+    </div>
   );
-}
+};
 
-export default Jeux;
+export default ProductFeedbackForm;

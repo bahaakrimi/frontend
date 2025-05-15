@@ -37,6 +37,9 @@ import ProductList from './ProductList'
 import HomePage from './HomePage'
 import PanierPage from './PanierPage'
 import JeuxP  from './JeuxP'
+import App2 from './App2'
+import Profil from './Profil'
+import RatingStars from './RatingStars'
 
 
 import { CartProvider } from './context/CartContext';
@@ -82,6 +85,8 @@ export default function RoutesComponent() {
       <Route path="/Neklesh" element={<Neklesh/>}></Route>
       <Route path="/Women" element={<Women/>}></Route>
       <Route path="/JeuxP" element={<JeuxP/>}></Route>
+      <Route path="/App2" element={< App2/>}></Route>
+      <Route path="/Profil" element={< Profil/>}></Route>
     
 
       <Route path="/Jhumka" element={<Jhumka/>}></Route>
@@ -89,6 +94,7 @@ export default function RoutesComponent() {
       <Route path="/Nintendo" element={<Nintendo/>}></Route>
       <Route path="/PanierPage" element={<PanierPage/>}></Route>
       <Route path="/HomePage" element={<HomePage/>}></Route>
+      <Route path="/RatingStars" element={<RatingStars/>}></Route>
      
 
 

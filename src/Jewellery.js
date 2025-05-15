@@ -16,6 +16,45 @@ function Jewellery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [jeux, setJeux] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [currentProductId, setCurrentProductId] = useState(null);
+
+  const handleSubmitFeedback = async (productId) => {
+    if (rating < 1 || rating > 5) {
+      setError('Veuillez sélectionner une note entre 1 et 5');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `http://localhost:5000/produit/addFeedback/${productId}`,
+        { rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setMessage(response.data.message);
+      setRating(0);
+      setComment('');
+      setCurrentProductId(null); // Fermer le formulaire après soumission
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur serveur');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   useEffect(() => {
     const fetchJeux = async () => {
       try {
@@ -224,64 +263,130 @@ function Jewellery() {
               <div className="container">
                 <h1 className="fashion_taital">Jewellery</h1>
                 <div className="fashion_section_2">
-                  <div className="jeux-container">
-        {jeux.map(jeu => (
-          <div key={jeu._id} className={`jeu-card ${jeu.promotion === 'oui' ? 'promo' : ''}`}>
-            {jeu.promotion === 'oui' && (
-              <div className="promo-banner">EN PROMOTION</div>
-            )}
+                   <div className="jeux-container">
+      {jeux.map(jeu => (
+        <div key={jeu._id} className={`jeu-card ${jeu.promotion === 'oui' ? 'promo' : ''}`}>
+          {jeu.promotion === 'oui' && (
+            <div className="promo-banner">EN PROMOTION</div>
+          )}
+          
+          <div className="jeu-image-container">
+            <img 
+              src={jeu.imageUrl} 
+              alt={jeu.name}
+              onError={(e) => {
+                e.target.src = 'http://localhost:5000/files/default-product.png';
+              }}
+            />
+          </div>
+          
+          <div className="jeu-info">
+            <h3>{jeu.name}</h3>
             
-            <div className="jeu-image-container">
-              <img 
-                src={jeu.imageUrl} 
-                alt={jeu.name}
-                onError={(e) => {
-                  e.target.src = 'http://localhost:5000/files/default-product.png';
-                }}
-              />
+            <div className="jeu-pricing">
+              {jeu.promotion === 'oui' ? (
+                <>
+                  <span className="original-price">{jeu.price} TND</span>
+                  <span className="promo-price">{jeu.promotionprice} TND</span>
+                </>
+              ) : (
+                <span className="normal-price">{jeu.price} TND</span>
+              )}
             </div>
             
-            <div className="jeu-info">
-              <h3>{jeu.name}</h3>
-              
-              <div className="jeu-pricing">
-                {jeu.promotion === 'oui' ? (
-                  <>
-                    <span className="original-price">{jeu.price} TND</span>
-                    <span className="promo-price">{jeu.promotionprice} TND</span>
-                  </>
-                ) : (
-                  <span className="normal-price">{jeu.price} TND</span>
-                )}
-              </div>
-              
-              <div className="jeu-stock">
-                Disponible: {jeu.nbrproduit} unités
-              </div>
-                  </div>  
-      <div className="product-actions">
-        <button 
-          className="custom-order-btn"
-          onClick={handleBuyNowClick}
-        >
-          Ajouter une commande
-        </button>
-        <button 
-        
-          onClick={() => addToCart({
-            id: jeu._id,
-            name: jeu.name,
-            price: jeu.promotion === 'oui' ? jeu.promotionprice : jeu.price,
-            image: jeu.imageUrl
-          })}
-          className="custom-cart-btn"
-        >
-          Ajouter au panier
-        </button>
-      </div>
+            <div className="jeu-stock">
+              Disponible: {jeu.nbrproduit} unités
+            </div>
+          </div>
+
+          {/* Formulaire de feedback */}
+          <div className="feedback-form">
+            <h3>Leave Your Feedback</h3>
+            
+            {message && currentProductId === jeu._id && (
+              <div className="alert alert-success">{message}</div>
+            )}
+            {error && currentProductId === jeu._id && (
+              <div className="alert alert-danger">{error}</div>
+            )}
+
+            <div className="rating-stars mb-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${star <= rating ? 'filled' : ''}`}
+                  onClick={() => setRating(star)}
+                  style={{ cursor: 'pointer', fontSize: '24px' }}
+                >
+                  {star <= rating ? '★' : '☆'}
+                </span>
+              ))}
+              <span className="ms-2">{rating}/5</span>
+            </div>
+
+            {currentProductId === jeu._id && (
+              <>
+                <textarea
+                  className="form-control mb-2"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Votre commentaire..."
+                  rows="2"
+                />
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleSubmitFeedback(jeu._id)}
+                    disabled={isSubmitting || rating === 0}
+                  >
+                    {isSubmitting ? 'Envoi...' : 'Submit Feedback'}
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setCurrentProductId(null);
+                      setRating(0);
+                      setComment('');
+                    }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </>
+            )}
+
+            {currentProductId !== jeu._id && (
+              <button
+                className="btn btn-outline-primary"
+                onClick={() => setCurrentProductId(jeu._id)}
+              >
+                Donner votre avis
+              </button>
+            )}
+          </div>
+
+          <div className="product-actions">
+            <button 
+              className="custom-order-btn"
+              onClick={handleBuyNowClick}
+            >
+              Ajouter une commande
+            </button>
+            <button 
+              onClick={() => addToCart({
+                id: jeu._id,
+                name: jeu.name,
+                price: jeu.promotion === 'oui' ? jeu.promotionprice : jeu.price,
+                image: jeu.imageUrl
+              })}
+              className="custom-cart-btn"
+            >
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
-  ))}
-</div>
                 </div>
               </div>
             </div>
@@ -355,5 +460,6 @@ function Jewellery() {
     </>
   );
 }
+
 
 export default Jewellery;

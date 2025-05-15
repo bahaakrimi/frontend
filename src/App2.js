@@ -38,6 +38,16 @@ function App() {
     
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    // Récupérer les données utilisateur depuis localStorage au chargement
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setUsername(user.username);
+    }
+  }, []);
 
 
   const fetchProducts = async () => {
@@ -164,6 +174,9 @@ function App() {
 
 
   
+
+
+  
     
   return (
     
@@ -171,9 +184,20 @@ function App() {
     <><CartProvider>
     <div class="banner_bg_main">
       <div class="container">
+        
+        
+        
         <div class="header_section_top">
+            
+            
+            
+            
           <div class="row">
+            
+            
             <div class="col-sm-12">
+                
+                
               <div class="custom_menu">
               <nav>
         <ul className="main-nav">
@@ -195,7 +219,8 @@ function App() {
           <li><Link to="/Jewellery">Jewellery</Link></li>
           <li><Link to="/Sports">Sports</Link></li>
           <li><Link to="/Jeux">Jeux</Link></li>
-          <li><Link to="/JeuxP">Jeux  ppp</Link></li>
+          <li><Link to="/Profil">Jeux  ppp</Link></li>
+          
         </ul>
       </nav>
              
@@ -214,6 +239,22 @@ function App() {
           </div>
         </div>
       </div>
+      <header style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '10px 20px',
+      backgroundColor: '#f8f9fa',
+      borderBottom: '1px solid #ddd'
+    }}>
+      <div style={{ fontWeight: 'bold' }}>
+         <Link to="/Profil" ><i class="fa fa-user" aria-hidden="true"></i>
+        {username ? `             ${username}` : 'Effiyer'}</Link>
+      </div>
+      <nav>
+        {/* Vos liens de navigation ici */}
+      </nav>
+    </header>
       <div class="header_section">
 
         <div style={{ backgroundColor: '#FFD700', padding: '20px', borderRadius: '8px' }}>
@@ -322,11 +363,11 @@ function App() {
                         <span className="cart-count">{totalItems}</span>
                          )}
                    </Link>
-                  <li><a href="#">
-                    <i class="fa fa-user" aria-hidden="true"></i>
-                    <button onClick={goToCreationUser} >LOGIN</button></a>
-                  </li>
                   
+                  <li><a href="#">
+                    
+                    <button >LOGOUT</button></a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -357,7 +398,7 @@ function App() {
                 <div class="row">
                   <div class="col-sm-12">
                     <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                    <div class="buynow_bt"><Link to="/Electronic">buy Now</Link></div>
+                    <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
                   </div>
                 </div>
               </div>
@@ -454,17 +495,6 @@ function App() {
                     ) : (
                         <span>{product.price} TND</span>
                     )}
-                    <div class="rating">
-  <span class="star" data-value="1">★</span>
-  <span class="star" data-value="2">★</span>
-  <span class="star" data-value="3">★</span>
-  <span class="star" data-value="4">★</span>
-  <span class="star" data-value="5">★</span>
-</div>
-<input
-type='number'
- placeholder="Votre avis... max 5"></input>
-<button id="submit-review">Envoyer</button>
                 </div>
             </div>
 
