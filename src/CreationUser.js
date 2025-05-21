@@ -20,10 +20,11 @@ function CreateUserForm() {
 
   const AddNewUser = async () => {
     try {
-      await addUserClient(newUser);
+      const res = await addUserClient(newUser); // You need to capture the response
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       navigate('/App');
     } catch (error) {
-      console.log(error);
+      console.error("Error adding new user:", error); // Better error logging
     }
   };
 

@@ -12,6 +12,8 @@ import Cmande   from './Cmande'
 import axios from 'axios';
 import './Jeux.css';
 
+import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
+
 import { CartContext } from './context/CartContext';
 import Panier from './Panier'
 import { useState, useEffect } from 'react';
@@ -39,6 +41,46 @@ function App() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [username, setUsername] = useState('');
+
+    const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [currentProductId, setCurrentProductId] = useState(null);
+
+  const handleSubmitFeedback = async (productId) => {
+    if (rating < 1 || rating > 5) {
+      setError('Veuillez sélectionner une note entre 1 et 5');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `http://localhost:5000/produit/addFeedback/${productId}`,
+        { rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setMessage(response.data.message);
+      setRating(0);
+      setComment('');
+      setCurrentProductId(null); // Fermer le formulaire après soumission
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur serveur');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     // Récupérer les données utilisateur depuis localStorage au chargement
@@ -173,6 +215,44 @@ function App() {
   };
 
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+
+  const styles = {
+    banner: {
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: '#f8f8f8',
+      fontFamily: 'Arial, sans-serif',
+      margin: '20px 0',
+      borderRadius: '8px',
+    },
+    title: {
+      margin: '0 0 15px 0',
+      color: '#333',
+      fontSize: '24px',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
+    },
+    iconsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '25px',
+    },
+    icon: {
+      fontSize: '32px',
+      color: '#555',
+      transition: 'color 0.3s ease',
+      cursor: 'pointer',
+    },
+    iconHover: {
+      color: '#000',
+    },
+  };
+
   
 
 
@@ -219,7 +299,7 @@ function App() {
           <li><Link to="/Jewellery">Jewellery</Link></li>
           <li><Link to="/Sports">Sports</Link></li>
           <li><Link to="/Jeux">Jeux</Link></li>
-          <li><Link to="/Profil">Jeux  ppp</Link></li>
+          <li><Link to="/Profil">meilleur produit</Link></li>
           
         </ul>
       </nav>
@@ -366,7 +446,14 @@ function App() {
                   
                   <li><a href="#">
                     
-                    <button >LOGOUT</button></a>
+                    <button 
+              onClick={handleLogout}
+              style={{ ...styles.button, ...styles.logoutButton }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
+            >
+              Déconnexion
+            </button></a>
                   </li>
                 </ul>
               </div>
@@ -419,322 +506,434 @@ function App() {
 
 
       <div className="fashion-section">
-        
-       {error && <p style={styles.error}>{error}</p>}
-{searchError && (
-    <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
-)}
-
-<div style={{ 
-    display: 'grid', 
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '25px',
-    padding: '25px'
-}}>
-    {products.map(product => (
-        <div key={product._id} style={{ 
-            padding: '20px',
-            border: '2px solid #3498db',
-            borderRadius: '12px',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            background: '#f8fbfe',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            position: 'relative'
-        }}>
-            {/* Badge de promotion */}
-            {product.promotionprice && (
-                <div style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    backgroundColor: '#e74c3c',
-                    color: 'white',
-                    padding: '5px 10px',
-                    borderRadius: '5px',
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold'
-                }}>EN PROMOTION</div>
-            )}
-            
-            {/* En-tête renforcé */}
-            <div style={{ 
-                marginBottom: '20px',
-                textAlign: 'center',
-                lineHeight: '1.4'
-            }}>
-                <h3 style={{ 
-                    margin: '0 0 8px 0', 
-                    fontSize: '1.4rem',
-                    fontWeight: 600,
-                    color: '#2c3e50'
-                }}>
-                    {product.name}
-                </h3>
+             
+            {error && <p style={styles.error}>{error}</p>}
+     {searchError && (
+         <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
+     )}
+     
+     <div style={{ 
+         display: 'grid', 
+         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+         gap: '25px',
+         padding: '25px'
+     }}>
+         {products.map(product => (
+             <div key={product._id} style={{ 
+                 padding: '20px',
+                 border: '2px solid #3498db',
+                 borderRadius: '12px',
+                 display: 'flex',
+                 flexDirection: 'column',
+                 height: '100%',
+                 background: '#f8fbfe',
+                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                 position: 'relative'
+             }}>
+                 {/* Badge de promotion */}
+                 {product.promotionprice && (
+                     <div style={{
+                         position: 'absolute',
+                         top: '10px',
+                         right: '10px',
+                         backgroundColor: '#e74c3c',
+                         color: 'white',
+                         padding: '5px 10px',
+                         borderRadius: '5px',
+                         fontSize: '0.8rem',
+                         fontWeight: 'bold'
+                     }}>EN PROMOTION</div>
+                 )}
+                 
+                 {/* En-tête renforcé */}
+                 <div style={{ 
+                     marginBottom: '20px',
+                     textAlign: 'center',
+                     lineHeight: '1.4'
+                 }}>
+                     <h3 style={{ 
+                         margin: '0 0 8px 0', 
+                         fontSize: '1.4rem',
+                         fontWeight: 600,
+                         color: '#2c3e50'
+                     }}>
+                         {product.name}
+                     </h3>
+                     
+                     <div style={{ 
+                         margin: 0,
+                         fontSize: '1.3rem',
+                         color: '#e74c3c',
+                         fontWeight: 'bold',
+                         letterSpacing: '0.5px'
+                     }}>
+                         {product.promotionprice ? (
+                             <>
+                                 <span style={{ 
+                                     textDecoration: 'line-through',
+                                     color: '#95a5a6',
+                                     marginRight: '10px',
+                                     fontSize: '1rem'
+                                 }}>
+                                     {product.price} TND
+                                 </span>
+                                 {product.promotionprice} TND
+                             </>
+                         ) : (
+                             <span>{product.price} TND</span>
+                         )}
+                        
+     
+     
+                     </div>
+                 </div>
+     
+                 {/* Image agrandie */}
+                 <div style={{ 
+                     flexGrow: 1, 
+                     marginBottom: '20px',
+                     border: '1px solid #ecf0f1',
+                     borderRadius: '8px',
+                     padding: '10px'
+                 }}>
+                     <img 
+                         src={product.imageUrl} 
+                         alt={product.name}
+                         style={{ 
+                             width: '100%',
+                             height: '220px',
+                             objectFit: 'contain',
+                             margin: '0 auto',
+                             display: 'block'
+                         }}
+                         onError={(e) => {
+                             e.target.src = 'http://localhost:5000/files/default-product.png';
+                         }}
+                     />
+                 </div>
+                 
+                 {/* Information sur le stock */}
+                 <p style={{ 
+                     margin: '0 0 15px 0',
+                     textAlign: 'center',
+                     color: '#7f8c8d',
+                     fontSize: '0.9rem'
+                 }}>
+                     Disponible: {product.nbrproduit} unités
+                 </p>
+     
+                 {/* Boutons */}
+                 <div style={{ 
+                     display: 'flex',
+                     flexDirection: 'column',
+                     gap: '10px'
+                 }}>
+     
+     
+     
+                   {/* Formulaire de feedback */}
+               <div className="feedback-form">
+                 <h3>Leave Your Feedback</h3>
+                 
+                 {message && currentProductId === product._id && (
+                   <div className="alert alert-success">{message}</div>
+                 )}
+                 {error && currentProductId === product._id && (
+                   <div className="alert alert-danger">{error}</div>
+                 )}
+     
+                 <div className="rating-stars mb-3">
+                   {[1, 2, 3, 4, 5].map((star) => (
+                     <span
+                       key={star}
+                       className={`star ${star <= rating ? 'filled' : ''}`}
+                       onClick={() => setRating(star)}
+                       style={{ cursor: 'pointer', fontSize: '24px' }}
+                     >
+                       {star <= rating ? '★' : '☆'}
+                     </span>
+                   ))}
+                   <span className="ms-2">{rating}/5</span>
+                 </div>
+     
+                 {currentProductId === product._id && (
+                   <>
+                     <textarea
+                       className="form-control mb-2"
+                       value={comment}
+                       onChange={(e) => setComment(e.target.value)}
+                       placeholder="Votre commentaire..."
+                       rows="2"
+                     />
+                     <div className="d-flex gap-2">
+                       <button
+                         className="btn btn-primary"
+                         onClick={() => handleSubmitFeedback(product._id)}
+                         disabled={isSubmitting || rating === 0}
+                       >
+                         {isSubmitting ? 'Envoi...' : 'Submit Feedback'}
+                       </button>
+                       <button
+                         className="btn btn-secondary"
+                         onClick={() => {
+                           setCurrentProductId(null);
+                           setRating(0);
+                           setComment('');
+                         }}
+                       >
+                         Annuler
+                       </button>
+                     </div>
+                   </>
+                 )}
+     
+                 {currentProductId !== product._id && (
+                   <button
+                     className="btn btn-outline-primary"
+                     onClick={() => setCurrentProductId(product._id)}
+                   >
+                     Donner votre avis
+                   </button>
+                 )}
+               </div>
+                      <button 
+       onClick={() => navigate('/Cmande', { 
+         state: { 
+           productName: product.name, 
+           
+         }
+       })}
+     >
+       Ajouter une commande
+     </button>
+                     
+                     <button 
+             
+               onClick={() => addToCart({
+                 id: product._id,
+                 name: product.name,
+                 price: product.promotion === 'oui' ? product.promotionprice : product.price,
+                 image: product.imageUrl
+               })}
+               className="custom-cart-btn"
+             >
+               Ajouter au panier
+             </button>
+                 </div>
+             </div>
+         ))}
+     </div>
+             
                 
-                <div style={{ 
-                    margin: 0,
-                    fontSize: '1.3rem',
-                    color: '#e74c3c',
-                    fontWeight: 'bold',
-                    letterSpacing: '0.5px'
-                }}>
-                    {product.promotionprice ? (
-                        <>
-                            <span style={{ 
-                                textDecoration: 'line-through',
-                                color: '#95a5a6',
-                                marginRight: '10px',
-                                fontSize: '1rem'
-                            }}>
-                                {product.price} TND
-                            </span>
-                            {product.promotionprice} TND
-                        </>
-                    ) : (
-                        <span>{product.price} TND</span>
-                    )}
-                </div>
-            </div>
-
-            {/* Image agrandie */}
-            <div style={{ 
-                flexGrow: 1, 
-                marginBottom: '20px',
-                border: '1px solid #ecf0f1',
-                borderRadius: '8px',
-                padding: '10px'
-            }}>
-                <img 
-                    src={product.imageUrl} 
-                    alt={product.name}
-                    style={{ 
-                        width: '100%',
-                        height: '220px',
-                        objectFit: 'contain',
-                        margin: '0 auto',
-                        display: 'block'
-                    }}
-                    onError={(e) => {
-                        e.target.src = 'http://localhost:5000/files/default-product.png';
-                    }}
-                />
-            </div>
-            
-            {/* Information sur le stock */}
-            <p style={{ 
-                margin: '0 0 15px 0',
-                textAlign: 'center',
-                color: '#7f8c8d',
-                fontSize: '0.9rem'
-            }}>
-                Disponible: {product.nbrproduit} unités
-            </p>
-
-            {/* Boutons */}
-            <div style={{ 
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px'
-            }}>
-                <button 
-                    onClick={handleBuyNowClick}
-                    style={{
-                        padding: '12px 25px',
-                        backgroundColor: '#3498db',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        width: '100%',
-                        transition: 'all 0.3s ease',
-                        fontWeight: 500
-                    }}
-                    onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
-                    onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
-                >
-                    Ajouter une commande
-                </button>
-                
-                <button 
-        
-          onClick={() => addToCart({
-            id: product._id,
-            name: product.name,
-            price: product.promotion === 'oui' ? product.promotionprice : product.price,
-            image: product.imageUrl
-          })}
-          className="custom-cart-btn"
-        >
-          Ajouter au panier
-        </button>
-            </div>
-        </div>
-    ))}
-</div>
-        
-            <div className="social-media-container">
-      <div className="social-text">RETROUVEZ-NOUS SUR</div>
-      <div className="social-icons">
-        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-          <img src="/facebook-icon.png" alt="Facebook" />
-        </a>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-          <img src="/instagram-icon.png" alt="Instagram" />
-        </a>
-        {/* Ajoutez d'autres réseaux sociaux au besoin */}
-      </div>
-    </div>
-            
-        
-        </div>
-      
-      </CartProvider>
-          
-          
-      </>
-      
-  );
-}
-// Styles
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif'
-  },
-  filterContainer: {
-    backgroundColor: '#f5f5f5',
-    padding: '20px',
-    borderRadius: '8px',
-    marginBottom: '30px'
-  },
-  title: {
-    color: '#333',
-    marginBottom: '20px'
-  },
-  filterForm: {
-    display: 'flex',
-    gap: '20px',
-    alignItems: 'flex-end',
-    flexWrap: 'wrap'
-  },
-  inputGroup: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  label: {
-    marginBottom: '8px',
-    fontWeight: '600'
-  },
-  input: {
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    width: '150px'
-  },
-  filterButton: {
-    padding: '10px 20px',
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontWeight: '600'
-  },
-  error: {
-    color: 'red',
-    textAlign: 'center'
-  },
-  productsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '20px'
-  },
-  productCard: {
-    border: '1px solid #e0e0e0',
-    borderRadius: '8px',
-    padding: '15px',
-    position: 'relative',
-    transition: 'transform 0.3s',
-    ':hover': {
-      transform: 'translateY(-5px)',
-      boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
-    }
-  },
-  promotionBadge: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    backgroundColor: '#e74c3c',
-    color: 'white',
-    padding: '5px 10px',
-    borderRadius: '4px',
-    fontSize: '0.8rem',
-    fontWeight: 'bold'
-  },
-  productImage: {
-    width: '100%',
-    height: '180px',
-    objectFit: 'contain',
-    marginBottom: '15px',
-    borderRadius: '4px'
-  },
-  productName: {
-    margin: '0 0 10px 0',
-    fontSize: '1.2rem',
-    color: '#333'
-  },
-  priceContainer: {
-    marginBottom: '10px'
-  },
-  price: {
-    fontSize: '1.3rem',
-    fontWeight: 'bold',
-    color: '#2c3e50'
-  },
-  originalPrice: {
-    fontSize: '1rem',
-    color: '#95a5a6',
-    textDecoration: 'line-through',
-    marginRight: '10px'
-  },
-  discountedPrice: {
-    fontSize: '1.3rem',
-    fontWeight: 'bold',
-    color: '#e74c3c'
-  },
-  stock: {
-    color: '#27ae60',
-    marginBottom: '15px'
-  },
-  buttonGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px'
-  },
-  orderButton: {
-    padding: '8px',
-    backgroundColor: '#3498db',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  cartButton: {
-    padding: '8px',
-    backgroundColor: '#2ecc71',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  
-};
-
-
-
-export default App;
+                 
+             
+             </div>
+             <div class="footer_section layout_padding">
+                        <div class="container">
+                          <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
+                          <div class="input_bt">
+                            <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email"/>
+                            <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+                          </div>
+                          <div style={styles.banner}>
+                                <h2 style={styles.title}>RETROUVEZ-NOUS SUR</h2>
+                                <div style={styles.iconsContainer}>
+                                  <a 
+                                    href="https://www.instagram.com" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit' }}
+                                  >
+                                    <FaInstagram 
+                                      style={styles.icon} 
+                                      onMouseEnter={(e) => e.target.style.color = '#E1306C'} 
+                                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                                    />
+                                  </a>
+                                  
+                                  <a 
+                                    href="mailto:bahaakrimi145@gmail.com"
+                                    style={{ color: 'inherit' }}
+                                  >
+                                    <FaEnvelope 
+                                      style={styles.icon} 
+                                      onMouseEnter={(e) => e.target.style.color = '#D44638'} 
+                                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                                    />
+                                  </a>
+                                  
+                                  <a 
+                                    href="https://www.facebook.com" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'inherit' }}
+                                  >
+                                    <FaFacebook 
+                                      style={styles.icon} 
+                                      onMouseEnter={(e) => e.target.style.color = '#4267B2'} 
+                                      onMouseLeave={(e) => e.target.style.color = '#555'} 
+                                    />
+                                  </a>
+                                </div>
+                              </div>
+                          <div class="footer_menu">
+                            <ul>
+                              <li><a href="#">Best Sellers</a></li>
+                              <li><a href="#">Gift Ideas</a></li>
+                              <li><a href="#">New Releases</a></li>
+                              <li><a href="#">Today's Deals</a></li>
+                              <li><a href="#">Customer Service</a></li>
+                            </ul>
+                          </div>
+                          <div class="location_main">Help Line Number : <a href="#">+216 123 456 78</a></div>
+                        </div>
+                      </div>
+           
+           </CartProvider>
+               
+               
+           </>
+           
+       );
+     }
+     // Styles
+     const styles = {
+       container: {
+         maxWidth: '1200px',
+         margin: '0 auto',
+         padding: '20px',
+         fontFamily: 'Arial, sans-serif'
+       },
+       filterContainer: {
+         backgroundColor: '#f5f5f5',
+         padding: '20px',
+         borderRadius: '8px',
+         marginBottom: '30px'
+       },
+       title: {
+         color: '#333',
+         marginBottom: '20px'
+       },
+       filterForm: {
+         display: 'flex',
+         gap: '20px',
+         alignItems: 'flex-end',
+         flexWrap: 'wrap'
+       },
+       inputGroup: {
+         display: 'flex',
+         flexDirection: 'column'
+       },
+       label: {
+         marginBottom: '8px',
+         fontWeight: '600'
+       },
+       input: {
+         padding: '10px',
+         border: '1px solid #ddd',
+         borderRadius: '4px',
+         width: '150px'
+       },
+       filterButton: {
+         padding: '10px 20px',
+         backgroundColor: '#3498db',
+         color: 'white',
+         border: 'none',
+         borderRadius: '4px',
+         cursor: 'pointer',
+         fontWeight: '600'
+       },
+       error: {
+         color: 'red',
+         textAlign: 'center'
+       },
+       productsGrid: {
+         display: 'grid',
+         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+         gap: '20px'
+       },
+       productCard: {
+         border: '1px solid #e0e0e0',
+         borderRadius: '8px',
+         padding: '15px',
+         position: 'relative',
+         transition: 'transform 0.3s',
+         ':hover': {
+           transform: 'translateY(-5px)',
+           boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+         }
+       },
+       promotionBadge: {
+         position: 'absolute',
+         top: '10px',
+         right: '10px',
+         backgroundColor: '#e74c3c',
+         color: 'white',
+         padding: '5px 10px',
+         borderRadius: '4px',
+         fontSize: '0.8rem',
+         fontWeight: 'bold'
+       },
+       productImage: {
+         width: '100%',
+         height: '180px',
+         objectFit: 'contain',
+         marginBottom: '15px',
+         borderRadius: '4px'
+       },
+       productName: {
+         margin: '0 0 10px 0',
+         fontSize: '1.2rem',
+         color: '#333'
+       },
+       priceContainer: {
+         marginBottom: '10px'
+       },
+       price: {
+         fontSize: '1.3rem',
+         fontWeight: 'bold',
+         color: '#2c3e50'
+       },
+       originalPrice: {
+         fontSize: '1rem',
+         color: '#95a5a6',
+         textDecoration: 'line-through',
+         marginRight: '10px'
+       },
+       discountedPrice: {
+         fontSize: '1.3rem',
+         fontWeight: 'bold',
+         color: '#e74c3c'
+       },
+       stock: {
+         color: '#27ae60',
+         marginBottom: '15px'
+       },
+       buttonGroup: {
+         display: 'flex',
+         flexDirection: 'column',
+         gap: '10px'
+       },
+       orderButton: {
+         padding: '8px',
+         backgroundColor: '#3498db',
+         color: 'white',
+         border: 'none',
+         borderRadius: '4px',
+         cursor: 'pointer'
+       },
+       cartButton: {
+         padding: '8px',
+         backgroundColor: '#2ecc71',
+         color: 'white',
+         border: 'none',
+         borderRadius: '4px',
+         cursor: 'pointer'
+       },
+       
+     };
+     
+     
+     
+     export default App;
+     

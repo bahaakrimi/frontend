@@ -8,56 +8,80 @@ import axios from 'axios';
 import './Jeux.css';
 import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
-
-
-function Electronic() {
+function Jewellery() {
   const { totalItems } = useCart(); // Ajoutez cette ligne
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [jeux, setJeux] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [currentProductId, setCurrentProductId] = useState(null);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
-  const [jeux, setJeux] = useState([]);
-  useEffect(() => {
-      const fetchJeux = async () => {
-        try {
-          const response = await axios.get('http://localhost:5000/produit/with-images');
-          const jeuxProduits = response.data.filter(produit => produit.category === 'electronic');
-          setJeux(jeuxProduits);
-          setLoading(false);
-        } catch (err) {
-          setError(err.message);
-          setLoading(false);
-        }
-      };
-  
-      fetchJeux();
-    }, []);
-  
 
-  
-  useEffect(() => {
-    const fetchProduits = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/produit/with-images');
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des produits');
+
+  const handleSubmitFeedback = async (productId) => {
+    if (rating < 1 || rating > 5) {
+      setError('Veuillez sélectionner une note entre 1 et 5');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `http://localhost:5000/produit/addFeedback/${productId}`,
+        { rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-        const data = await response.json();
-        setProduits(data);
+      );
+
+      setMessage(response.data.message);
+      setRating(0);
+      setComment('');
+      setCurrentProductId(null); // Fermer le formulaire après soumission
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur serveur');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  useEffect(() => {
+    const fetchJeux = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/produit/with-images');
+        const jeuxProduits = response.data.filter(produit => produit.category === 'electronic');
+        setJeux(jeuxProduits);
+        setLoading(false);
       } catch (err) {
         setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
 
-    fetchProduits();
+    fetchJeux();
   }, []);
+
+  if (loading) return <div className="loading">Chargement en cours...</div>;
+  if (error) return <div className="error">Erreur: {error}</div>;
+ 
+
+
 
   const goToCreationUser = () => {
     navigate('/LoginForm');
@@ -71,40 +95,8 @@ function Electronic() {
   if (loading) return <div>Chargement en cours...</div>;
   if (error) return <div>Erreur: {error}</div>;
 
-  // Filtrer les produits de la catégorie "electronic"
-  
-  
-
-  const handleSearch = async () => {
-    if (!searchTerm.trim()) {
-      setSearchError('Veuillez entrer un terme de recherche');
-      return;
-    }
-
-    setIsLoading(true);
-    setSearchError(null);
-    setProducts([]);
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/produit/searchProduitByName?name=${encodeURIComponent(searchTerm)}`
-      );
-
-      if (!response.ok) throw new Error('Erreur de recherche');
-
-      const data = await response.json();
-      setProducts(data.produits || []);
-
-      if (!data.produits?.length) {
-        setSearchError('Aucun produit trouvé');
-      }
-    } catch (error) {
-      setSearchError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const electronicProduits = produits.filter(produit => produit.category === 'electronic');
+  // Filtrer les produits de la catégorie "jewellery"
+  const jewelleryProduits = produits.filter(produit => produit.category === 'electronic');
   // Style JSX intégré
   const styles = {
     banner: {
@@ -138,61 +130,94 @@ function Electronic() {
     },
   };
 
+
+  // Filtrer les produits de la catégorie "fashion"
+  const fashionProduits = produits.filter(produit => produit.category === 'fashion');
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      setSearchError('Veuillez entrer un terme de recherche');
+      return;
+    }
+
+    setIsLoading(true);
+    setSearchError(null);
+    setProducts([]);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/produit/searchProduitByName?name=${encodeURIComponent(searchTerm)}`
+      );
+
+      if (!response.ok) throw new Error('Erreur de recherche');
+
+      const data = await response.json();
+      setProducts(data.produits || []);
+
+      if (!data.produits?.length) {
+        setSearchError('Aucun produit trouvé');
+      }
+    } catch (error) {
+      setSearchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <><CartProvider>
-        <div class="banner_bg_main">
-          <div class="container">
-            <div class="header_section_top">
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="custom_menu">
-                  <nav>
-            <ul className="main-nav">
-              <li><Link to="/app">HOME</Link></li>
-              <li><Link to="/Electronic">Electronic</Link></li>
-              <li><Link to="/Fashion">Fashion</Link></li>
-                
-              <li><Link to="/Jewellery">Jewellery</Link></li>
-              <li><Link to="/Sports">Sports</Link></li>
-              <li><Link to="/Jeux">Jeux</Link></li>
-            </ul>
-          </nav>
-                 
+        <><CartProvider>
+                <div class="banner_bg_main">  
+                  <div class="container">
+                    <div class="header_section_top">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="custom_menu">
+                         <nav>
+                <ul className="main-nav">
+                  <li><Link to="/app">HOME</Link></li>
+                  <li><Link to="/Electronic">Electronic</Link></li>
+                  <li><Link to="/Fashion">Fashion</Link></li>
+                    
+                  <li><Link to="/Jewellery">Jewellery</Link></li>
+                  <li><Link to="/Sports">Sports</Link></li>
+                  <li><Link to="/Jeux">Jeux</Link></li>
+                </ul>
+              </nav>
+                         
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-    
-          <div class="logo_section">
-            <div class="container">
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="logo"><a href="index.html"><img src="./assets/images/logo.png" /></a></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="header_section">
-            <div class="container">
-              <div class="containt_main">
-                <div id="mySidenav" class="sidenav">
-                  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                  <a href="index.html">Home</a>
-                  <a href="Electronic">Electronics</a>
-                  
-                </div>
-                <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
-                <div class="dropdown">
-                  
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
+            
+                  <div class="logo_section">
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="logo"><a href="index.html"><img src="./assets/images/logo.png" /></a></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="main">
-                  <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+                  <div class="header_section">
+                    <div class="container">
+                      <div class="containt_main">
+                        <div id="mySidenav" class="sidenav">
+                          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                          <a href="index.html">Home</a>
+                          <a href="Electronic">Electronics</a>
+                          
+                        </div>
+                        <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
+                        <div class="dropdown">
+                          
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                          </div>
+                        </div>
+                        <div class="main">
+                          <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
         <input
   type="text"
   value={searchTerm}
@@ -225,91 +250,77 @@ function Electronic() {
           
         </button>
       </div>
-
-                </div>
-                <div class="header_box">
-                  <div class="lang_box ">
-                    <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
-                      <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                    </a>
-                  </div>
-                  <div class="login_menu">
-                    <ul>
-                      <Link to="/Panier">
-                           <i className="fa fa-shopping-cart" aria-hidden="true"></i>
-                            <span className="padding_10">Panier</span>
-                            {totalItems > 0 && (
-                            <span className="cart-count">{totalItems}</span>
-                             )}
-                       </Link>
-                      <li><a href="#">
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                        <button onClick={goToCreationUser} >LOGIN</button></a>
-                      </li>
-                      <li><a href="#">
-                        
-                        <button >LOGOUT</button></a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="banner_section layout_padding">
-            <div class="container">
-              <div id="my_slider" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                  <div class="carousel-item active">
-                    <div class="row">
-                      <div class="col-sm-12">
-                        <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                        <div class="buynow_bt"><a href="buy.js">Buy Now</a></div>
+                        </div>
+                        <div class="header_box">
+                          <div class="lang_box ">
+                            <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
+                              <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
+                            </a>
+                          </div>
+                          <div class="login_menu">
+                            <ul>
+                              <Link to="/Panier">
+                                   <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    <span className="padding_10">Panier</span>
+                                    {totalItems > 0 && (
+                                    <span className="cart-count">{totalItems}</span>
+                                     )}
+                               </Link>
+                              
+                              
+                            </ul>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="carousel-item">
-                    <div class="row">
-                      <div class="col-sm-12">
-                        <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                        <div class="buynow_bt"><a href="buy">Buy Now</a></div>
+                  <div class="banner_section layout_padding">
+                    <div class="container">
+                      <div id="my_slider" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                                <div class="buynow_bt"><a href="buy.js">Buy Now</a></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="carousel-item">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                                <div class="buynow_bt"><a href="buy">Buy Now</a></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="carousel-item">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
+                                <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
+                          <i class="fa fa-angle-left"></i>
+                        </a>
+                        <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
+                          <i class="fa fa-angle-right"></i>
+                        </a>
                       </div>
                     </div>
                   </div>
-                  <div class="carousel-item">
-                    <div class="row">
-                      <div class="col-sm-12">
-                        <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                        <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
-                      </div>
-                    </div>
                   </div>
-                </div>
-                <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                  <i class="fa fa-angle-left"></i>
-                </a>
-                <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                  <i class="fa fa-angle-right"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          </div>
-          
-          
-          
-          
-
-        
-      
-      <div class="fashion_section">
-        <div id="electronic_main_slider" class="carousel slide" data-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <div class="container">
-                <h1 class="fashion_taital">Electronic</h1>
-                <div class="fashion_section_2">
-                  {searchError && (
+      <div className="fashion_section">
+        <div id="jewellery_main_slider" className="carousel slide" data-ride="carousel">
+          <div className="carousel-inner">
+            <div className="carousel-item active">
+              <div className="container">
+                <h1 className="fashion_taital">Electronic</h1>
+                <div className="fashion_section_2">
+                   {searchError && (
     <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
 )}
 
@@ -378,92 +389,229 @@ function Electronic() {
                     }}
                 />
             </div>
+               {/* Formulaire de feedback */}
+          <div className="feedback-form">
+            <h3>Leave Your Feedback</h3>
+            
+            {message && currentProductId === product._id && (
+              <div className="alert alert-success">{message}</div>
+            )}
+            {error && currentProductId === product._id && (
+              <div className="alert alert-danger">{error}</div>
+            )}
+
+            <div className="rating-stars mb-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${star <= rating ? 'filled' : ''}`}
+                  onClick={() => setRating(star)}
+                  style={{ cursor: 'pointer', fontSize: '24px' }}
+                >
+                  {star <= rating ? '★' : '☆'}
+                </span>
+              ))}
+              <span className="ms-2">{rating}/5</span>
+            </div>
+
+            {currentProductId === product._id && (
+              <>
+                <textarea
+                  className="form-control mb-2"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Votre commentaire..."
+                  rows="2"
+                />
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleSubmitFeedback(product._id)}
+                    disabled={isSubmitting || rating === 0}
+                  >
+                    {isSubmitting ? 'Envoi...' : 'Submit Feedback'}
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setCurrentProductId(null);
+                      setRating(0);
+                      setComment('');
+                    }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </>
+            )}
+
+            {currentProductId !== product._id && (
+              <button
+                className="btn btn-outline-primary"
+                onClick={() => setCurrentProductId(product._id)}
+              >
+                Donner votre avis
+              </button>
+            )}
+          </div>
+            
 
             {/* Bouton élargi */}
             <div style={{ textAlign: 'center' }}>
                 <button 
-                    onClick={handleBuyNowClick}
-                    style={{
-                        padding: '12px 25px',
-                        backgroundColor: '#3498db',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '1.1rem',
-                        width: '100%',
-                        transition: 'all 0.3s ease',
-                        fontWeight: 500
-                    }}
-                    onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
-                    onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
-                >
-                    Ajouter une commande
-                </button>
+  onClick={() => navigate('/Cmande', { 
+    state: { 
+      productName: product.name, 
+      
+    }
+  })}
+>
+  Ajouter une commande
+</button>
+                <button 
+              onClick={() => addToCart({
+                id: product._id,
+                name: product.name,
+                price: product.promotion === 'oui' ? product.promotionprice : product.price,
+                image: product.imageUrl
+              })}
+              className="custom-cart-btn"
+            >
+              Ajouter au panier
+            </button>
             </div>
         </div>
     ))}
 </div>
+                   <div className="jeux-container">
+                    
+      {jeux.map(jeu => (
+        <div key={jeu._id} className={`jeu-card ${jeu.promotion === 'oui' ? 'promo' : ''}`}>
+          {jeu.promotion === 'oui' && (
+            <div className="promo-banner">EN PROMOTION</div>
+          )}
+          
+          <div className="jeu-image-container">
+            <img 
+              src={jeu.imageUrl} 
+              alt={jeu.name}
+              onError={(e) => {
+                e.target.src = 'http://localhost:5000/files/default-product.png';
+              }}
+            />
+          </div>
+          
+          <div className="jeu-info">
+            <h3>{jeu.name}</h3>
+            
+            <div className="jeu-pricing">
+              {jeu.promotion === 'oui' ? (
+                <>
+                  <span className="original-price">{jeu.price} TND</span>
+                  <span className="promo-price">{jeu.promotionprice} TND</span>
+                </>
+              ) : (
+                <span className="normal-price">{jeu.price} TND</span>
+              )}
+            </div>
+            
+            <div className="jeu-stock">
+              Disponible: {jeu.nbrproduit} unités
+            </div>
+          </div>
 
-                  <div className="jeux-container">
-                          {jeux.map(jeu => (
-                            <div key={jeu._id} className={`jeu-card ${jeu.promotion === 'oui' ? 'promo' : ''}`}>
-                              {jeu.promotion === 'oui' && (
-                                <div className="promo-banner">EN PROMOTION</div>
-                              )}
-                              
-                              <div className="jeu-image-container">
-                                <img 
-                                  src={jeu.imageUrl} 
-                                  alt={jeu.name}
-                                  onError={(e) => {
-                                    e.target.src = 'http://localhost:5000/files/default-product.png';
-                                  }}
-                                />
-                              </div>
-                              
-                              <div className="jeu-info">
-                                <h3>{jeu.name}</h3>
-                                
-                                <div className="jeu-pricing">
-                                  {jeu.promotion === 'oui' ? (
-                                    <>
-                                      <span className="original-price">{jeu.price} TND</span>
-                                      <span className="promo-price">{jeu.promotionprice} TND</span>
-                                    </>
-                                  ) : (
-                                    <span className="normal-price">{jeu.price} TND</span>
-                                  )}
-                                </div>
-                                
-                                <div className="jeu-stock">
-                                  Disponible: {jeu.nbrproduit} unités
-                                </div>
-                                
-                                <div className="product-actions">
-        <button 
-          className="custom-order-btn"
-          onClick={handleBuyNowClick}
-        >
-          Ajouter une commande
-        </button>
-        <button 
-        
-          onClick={() => addToCart({
-            id: jeu._id,
-            name: jeu.name,
-            price: jeu.promotion === 'oui' ? jeu.promotionprice : jeu.price,
-            image: jeu.imageUrl
-          })}
-          className="custom-cart-btn"
-        >
-          Ajouter au panier
-        </button>
-      </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
+          {/* Formulaire de feedback */}
+          <div className="feedback-form">
+            <h3>Leave Your Feedback</h3>
+            
+            {message && currentProductId === jeu._id && (
+              <div className="alert alert-success">{message}</div>
+            )}
+            {error && currentProductId === jeu._id && (
+              <div className="alert alert-danger">{error}</div>
+            )}
+
+            <div className="rating-stars mb-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${star <= rating ? 'filled' : ''}`}
+                  onClick={() => setRating(star)}
+                  style={{ cursor: 'pointer', fontSize: '24px' }}
+                >
+                  {star <= rating ? '★' : '☆'}
+                </span>
+              ))}
+              <span className="ms-2">{rating}/5</span>
+            </div>
+
+            {currentProductId === jeu._id && (
+              <>
+                <textarea
+                  className="form-control mb-2"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Votre commentaire..."
+                  rows="2"
+                />
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleSubmitFeedback(jeu._id)}
+                    disabled={isSubmitting || rating === 0}
+                  >
+                    {isSubmitting ? 'Envoi...' : 'Submit Feedback'}
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setCurrentProductId(null);
+                      setRating(0);
+                      setComment('');
+                    }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </>
+            )}
+
+            {currentProductId !== jeu._id && (
+              <button
+                className="btn btn-outline-primary"
+                onClick={() => setCurrentProductId(jeu._id)}
+              >
+                Donner votre avis
+              </button>
+            )}
+          </div>
+
+          <div className="product-actions">
+            <button 
+  onClick={() => navigate('/Cmande', { 
+    state: { 
+      productName: jeu.name, 
+      
+    }
+  })}
+>
+  Ajouter une commande
+</button>
+            <button 
+              onClick={() => addToCart({
+                id: jeu._id,
+                name: jeu.name,
+                price: jeu.promotion === 'oui' ? jeu.promotionprice : jeu.price,
+                image: jeu.imageUrl
+              })}
+              className="custom-cart-btn"
+            >
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
                 </div>
               </div>
             </div>
@@ -472,6 +620,8 @@ function Electronic() {
         </div>
       </div>
 
+      
+      
       <div class="footer_section layout_padding">
         <div class="container">
           <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
@@ -531,15 +681,10 @@ function Electronic() {
           </div>
           <div class="location_main">Help Line Number : <a href="#">+216 123 456 78</a></div>
         </div>
-      </div>
-      
-      <div class="copyright_section">
-        <div class="container">
-          
-        </div>
       </div></CartProvider>
     </>
   );
 }
 
-export default Electronic;
+
+export default Jewellery;

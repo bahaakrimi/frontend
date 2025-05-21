@@ -1,182 +1,296 @@
-import React, { useState, useEffect } from 'react';
-import { addCommande } from "./services/ApiCommandes";
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { saveAs } from 'file-saver';
 
-function Commande() {
-  const [userEmail, setUserEmail] = useState("");
-  const [newCommande, setNewCmd] = useState({
-    model: "",
-    prix: "",
-    matricule: "",
-    email: ""
-  });
+const Commande = () => {
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        model: '',
+        prix: '',
+        matricula: '',
+        tel: '',
+        email: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
+    const [factureData, setFactureData] = useState(null);
 
-  useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('user'));
-    if (userData) {
-      setUserEmail(userData.email);
-      setNewCmd(prevState => ({
-        ...prevState,
-        email: userData.email,
-        matricule: userData.username || "admin"
-      }));
-    }
-  }, []);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewCmd({ ...newCommande, [name]: value });
-  };
+    const generateFacture = (commandeData) => {
+        const factureContent = `
+            ==============================
+            FACTURE - COMMANDE ${commandeData.reference}
+            ==============================
+            
+            Date: ${new Date().toLocaleDateString()}
+            
+            DÉTAILS DE LA COMMANDE:
+            -------------------------------
+            Modèle: ${formData.model}
+            Prix: ${formData.prix} DH
+            Référence: ${formData.matricula}
+            
+            INFORMATIONS CLIENT:
+            -------------------------------
+            Email: ${formData.email}
+            Téléphone: ${formData.tel}
+            
+            Statut: En attente de traitement
+            
+            Merci pour votre commande!
+        `;
 
-  const AddNewCommande = async () => {
-    try {
-      if (!newCommande.model || !newCommande.prix || !newCommande.matricule) {
-        alert("Veuillez remplir tous les champs obligatoires !");
-        return;
-      }
-      
-      await addCommande(newCommande);
-      setNewCmd({
-        model: "",
-        prix: "",
-        matricule: newCommande.matricule, // Garde la même valeur pour matricule
-        email: userEmail
-      });
-      alert("Commande ajoutée avec succès !");
-    } catch (error) {
-      console.log(error);
-      alert("Erreur lors de l'ajout de la commande");
-    }
-  };
+        const blob = new Blob([factureContent], { type: 'text/plain;charset=utf-8' });
+        saveAs(blob, `facture_${commandeData.reference}.txt`);
+    };
 
-  // Styles cohérents avec les autres formulaires
-  const containerStyle = {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
 
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f8f9fa',
-    fontFamily: 'Arial, sans-serif',
-  };
+        try {
+            if (!formData.email.includes('@')) {
+                throw new Error('Veuillez entrer un email valide');
+            }
 
-  const loginBoxStyle = {
-    width: '350px',
-    padding: '40px',
-    backgroundColor: 'white',
-    borderRadius: '10px',
-    boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-    textAlign: 'center',
-  };
+            const response = await axios.post('http://localhost:5000/commande/add', formData);
+            
+            if (response.data.success) {
+                setSuccess(true);
+                setFactureData(response.data);
+                generateFacture(response.data);
+                
+                setTimeout(() => {
+                    setFormData({
+                        model: '',
+                        prix: '',
+                        matricula: '',
+                        tel: '',
+                        email: ''
+                    });
+                    setSuccess(false);
+                }, 5000);
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || err.message || 'Une erreur est survenue');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const titleStyle = {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    marginBottom: '30px',
-    color: '#333',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '12px 15px',
-    marginBottom: '20px',
-    borderRadius: '5px',
-    border: '1px solid #ddd',
-    fontSize: '14px',
-    boxSizing: 'border-box',
-  };
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#4a67ff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    marginTop: '10px',
-    marginBottom: '20px',
-    transition: 'background-color 0.3s',
-  };
-
-  const buttonHoverStyle = {
-    backgroundColor: '#3a56e0',
-  };
-
-  const linkStyle = {
-    display: 'block',
-    color: '#4a67ff',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    marginTop: '10px',
-  };
-
-  const brandStyle = {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: '30px',
-  };
-
-  return (
-    <div style={containerStyle}>
-      <div style={brandStyle}></div>
-      <div style={loginBoxStyle}>
-        <div style={titleStyle}>Nouvelle Commande</div>
-        
-        <input
-          type="text"
-          name="model"
-          placeholder="Modèle du produit"
-          style={inputStyle}
-          value={newCommande.model}
-          onChange={handleChange}
-        />
-        
-        <input
-          type="number"
-          name="prix"
-          placeholder="Prix"
-          style={inputStyle}
-          value={newCommande.prix}
-          onChange={handleChange}
-        />
-        
-        <input
-          type="text"
-          name="matricule"
-          placeholder="Nom du client"
-          style={inputStyle}
-          value={newCommande.matricule}
-          onChange={handleChange}
-        />
-        
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          style={inputStyle}
-          value={newCommande.email}
-          onChange={handleChange}
-          readOnly={!!userEmail}
-        />
-        
-        <button
-          onClick={AddNewCommande}
-          style={buttonStyle}
-          onMouseEnter={(e) => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
-          onMouseLeave={(e) => e.target.style.backgroundColor = buttonStyle.backgroundColor}
-        >
-          Ajouter la commande
-        </button>
-        
-        <Link to="/PayPage" style={linkStyle}>Procéder au paiement</Link>
-      </div>
-    </div>
-  );
-}
+    return (
+        <div style={{
+            maxWidth: '600px',
+            margin: '2rem auto',
+            padding: '2rem',
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+            fontFamily: 'Arial, sans-serif'
+        }}>
+            <h1 style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                marginBottom: '1.5rem',
+                textAlign: 'center',
+                color: '#333'
+            }}>Passer une commande</h1>
+            
+            {error && (
+                <div style={{
+                    backgroundColor: '#fee2e2',
+                    border: '1px solid #fca5a5',
+                    color: '#dc2626',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '0.375rem',
+                    marginBottom: '1rem'
+                }}>
+                    {error}
+                </div>
+            )}
+            
+            {success && factureData && (
+                <div style={{
+                    backgroundColor: '#dcfce7',
+                    border: '1px solid #86efac',
+                    color: '#166534',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '0.375rem',
+                    marginBottom: '1rem'
+                }}>
+                    <p>Commande enregistrée avec succès!</p>
+                    <p>Référence: {factureData.reference}</p>
+                    <p>Votre facture a été téléchargée automatiquement.</p>
+                </div>
+            )}
+            
+            <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                    <label htmlFor="model" style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontWeight: '600',
+                        color: '#374151'
+                    }}>Modèle:</label>
+                    <input
+                        type="text"
+                        id="model"
+                        name="model"
+                        value={formData.model}
+                        onChange={handleChange}
+                        required
+                        style={{
+                            width: '100%',
+                            padding: '0.5rem 0.75rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                        }}
+                        placeholder="Ex: PlayStation 5"
+                    />
+                </div>
+                
+                <div>
+                    <label htmlFor="prix" style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontWeight: '600',
+                        color: '#374151'
+                    }}>Prix (DH):</label>
+                    <input
+                        type="number"
+                        id="prix"
+                        name="prix"
+                        value={formData.prix}
+                        onChange={handleChange}
+                        required
+                        style={{
+                            width: '100%',
+                            padding: '0.5rem 0.75rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                        }}
+                        placeholder="Ex: 4999"
+                    />
+                </div>
+                
+                <div>
+                    <label htmlFor="matricula" style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontWeight: '600',
+                        color: '#374151'
+                    }}>Matricule/Référence:</label>
+                    <input
+                        type="text"
+                        id="matricula"
+                        name="matricula"
+                        value={formData.matricula}
+                        onChange={handleChange}
+                        required
+                        style={{
+                            width: '100%',
+                            padding: '0.5rem 0.75rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                        }}
+                        placeholder="Ex: CMD-2024-001"
+                    />
+                </div>
+                
+                <div>
+                    <label htmlFor="email" style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontWeight: '600',
+                        color: '#374151'
+                    }}>Email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        style={{
+                            width: '100%',
+                            padding: '0.5rem 0.75rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                        }}
+                        placeholder="Ex: client@example.com"
+                    />
+                </div>
+                
+                <div>
+                    <label htmlFor="tel" style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontWeight: '600',
+                        color: '#374151'
+                    }}>Téléphone:</label>
+                    <input
+                        type="tel"
+                        id="tel"
+                        name="tel"
+                        value={formData.tel}
+                        onChange={handleChange}
+                        required
+                        style={{
+                            width: '100%',
+                            padding: '0.5rem 0.75rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            outline: 'none',
+                            transition: 'border-color 0.2s',
+                            boxSizing: 'border-box'
+                        }}
+                        placeholder="Ex: 0612345678"
+                    />
+                </div>
+                
+                <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                        width: '100%',
+                        padding: '0.5rem 1rem',
+                        backgroundColor: loading ? '#93c5fd' : '#2563eb',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        fontWeight: '600',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        transition: 'background-color 0.2s',
+                        marginTop: '1rem'
+                    }}
+                >
+                    {loading ? 'Envoi en cours...' : 'Envoyer et générer la facture'}
+                </button>
+            </form>
+        </div>
+    );
+};
 
 export default Commande;

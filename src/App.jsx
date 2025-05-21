@@ -11,6 +11,7 @@ import Jeux from './Jeux'
 import Cmande   from './Cmande'
 import axios from 'axios';
 import './Jeux.css';
+import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
 import { CartContext } from './context/CartContext';
 import Panier from './Panier'
@@ -24,7 +25,7 @@ import { useCart } from './context/CartContext';
 
 
 
-
+import { FaAngleDown } from 'react-icons/fa';
 
 
 
@@ -38,6 +39,48 @@ function App() {
     
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [currentProductId, setCurrentProductId] = useState(null);
+
+  const handleSubmitFeedback = async (productId) => {
+    if (rating < 1 || rating > 5) {
+      setError('Veuillez sélectionner une note entre 1 et 5');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `http://localhost:5000/produit/addFeedback/${productId}`,
+        { rating, comment },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setMessage(response.data.message);
+      setRating(0);
+      setComment('');
+      setCurrentProductId(null); // Fermer le formulaire après soumission
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur serveur');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
 
 
   const fetchProducts = async () => {
@@ -110,7 +153,7 @@ function App() {
     };
     const [produits, setProduits] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    
 
     
     
@@ -161,6 +204,39 @@ function App() {
       setIsLoading(false);
     }
   };
+  const styles = {
+    banner: {
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: '#f8f8f8',
+      fontFamily: 'Arial, sans-serif',
+      margin: '20px 0',
+      borderRadius: '8px',
+    },
+    title: {
+      margin: '0 0 15px 0',
+      color: '#333',
+      fontSize: '24px',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
+    },
+    iconsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '25px',
+    },
+    icon: {
+      fontSize: '32px',
+      color: '#555',
+      transition: 'color 0.3s ease',
+      cursor: 'pointer',
+    },
+    iconHover: {
+      color: '#000',
+    },
+  };
+
+  
 
 
   
@@ -195,7 +271,7 @@ function App() {
           <li><Link to="/Jewellery">Jewellery</Link></li>
           <li><Link to="/Sports">Sports</Link></li>
           <li><Link to="/Jeux">Jeux</Link></li>
-          <li><Link to="/JeuxP">Jeux  ppp</Link></li>
+          <li><Link to="/JeuxP">meilleur produit</Link></li>
         </ul>
       </nav>
              
@@ -216,37 +292,94 @@ function App() {
       </div>
       <div class="header_section">
 
-        <div style={{ backgroundColor: '#FFD700', padding: '20px', borderRadius: '8px' }}>
-  <h2 style={styles.title}>Filtrer par prix</h2>
-  <form onSubmit={handleFilter} style={styles.filterForm}>
-    <div style={styles.inputGroup}>
-      <label style={styles.label}>Prix minimum (TND):</label>
+        <div style={{ 
+  backgroundColor: '#FFD700', 
+  padding: '20px', 
+  borderRadius: '8px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+}}>
+  <h2 style={{
+    margin: '0 0 15px 0',
+    color: '#333',
+    fontSize: '18px',
+    fontWeight: '600'
+  }}>Filtrer par prix</h2>
+  
+  <form onSubmit={handleFilter} style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px'
+  }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '5px'
+    }}>
+      <label style={{
+        fontSize: '14px',
+        color: '#555',
+        fontWeight: '500'
+      }}>Prix minimum (TND):</label>
       <input
         type="number"
         value={minPrice}
         onChange={(e) => setMinPrice(Number(e.target.value))}
-        style={styles.input}
+        style={{
+          padding: '8px 12px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          fontSize: '14px'
+        }}
         min="0"
-        placeholder="0"  // Valeur par défaut implicite
+        placeholder="0"
       />
     </div>
     
-    <div style={styles.inputGroup}>
-      <label style={styles.label}>Prix maximum (TND):</label>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '5px'
+    }}>
+      <label style={{
+        fontSize: '14px',
+        color: '#555',
+        fontWeight: '500'
+      }}>Prix maximum (TND):</label>
       <input
         type="number"
-        value={maxPrice}  // Affiche vide si undefined/null/0
+        value={maxPrice}
         onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : null)}
-        style={styles.input}
+        style={{
+          padding: '8px 12px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          fontSize: '14px'
+        }}
         min="0"
-        placeholder="0" 
-         
+        placeholder="0"
       />
     </div>
     
     <button 
       type="submit" 
-      style={styles.filterButton}
+      style={{
+        padding: '10px 15px',
+        backgroundColor: '#333',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontWeight: '600',
+        fontSize: '14px',
+        transition: 'background-color 0.2s',
+        ':hover': {
+          backgroundColor: '#555'
+        },
+        ':disabled': {
+          backgroundColor: '#999',
+          cursor: 'not-allowed'
+        }
+      }}
       disabled={loading}
     >
       {loading ? 'Filtrage...' : 'Filtrer'}
@@ -308,11 +441,17 @@ function App() {
 
                 </div>
             <div class="header_box">
-              <div class="lang_box ">
-                <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
-                  <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                </a>
-              </div>
+              <div className="lang-box" >
+      <div className="language-display" style={{backgroundColor: '#f8f8f8', borderRadius: '8px', padding: '10px' }}>
+        <img 
+          src="./assets/images/flag-uk.png" 
+          alt="UK flag" 
+          className="language-flag"
+        />
+        <span>English</span>
+        <FaAngleDown className="dropdown-icon" />
+      </div>
+    </div>
               <div class="login_menu">
                 <ul>
                   <Link to="/Panier">
@@ -454,17 +593,9 @@ function App() {
                     ) : (
                         <span>{product.price} TND</span>
                     )}
-                    <div class="rating">
-  <span class="star" data-value="1">★</span>
-  <span class="star" data-value="2">★</span>
-  <span class="star" data-value="3">★</span>
-  <span class="star" data-value="4">★</span>
-  <span class="star" data-value="5">★</span>
-</div>
-<input
-type='number'
- placeholder="Votre avis... max 5"></input>
-<button id="submit-review">Envoyer</button>
+                   
+
+
                 </div>
             </div>
 
@@ -508,25 +639,84 @@ type='number'
                 flexDirection: 'column',
                 gap: '10px'
             }}>
-                <button 
-                    onClick={handleBuyNowClick}
-                    style={{
-                        padding: '12px 25px',
-                        backgroundColor: '#3498db',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '1rem',
-                        width: '100%',
-                        transition: 'all 0.3s ease',
-                        fontWeight: 500
-                    }}
-                    onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
-                    onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
+
+
+
+              {/* Formulaire de feedback */}
+          <div className="feedback-form">
+            <h3>Leave Your Feedback</h3>
+            
+            {message && currentProductId === product._id && (
+              <div className="alert alert-success">{message}</div>
+            )}
+            {error && currentProductId === product._id && (
+              <div className="alert alert-danger">{error}</div>
+            )}
+
+            <div className="rating-stars mb-3">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${star <= rating ? 'filled' : ''}`}
+                  onClick={() => setRating(star)}
+                  style={{ cursor: 'pointer', fontSize: '24px' }}
                 >
-                    Ajouter une commande
-                </button>
+                  {star <= rating ? '★' : '☆'}
+                </span>
+              ))}
+              <span className="ms-2">{rating}/5</span>
+            </div>
+
+            {currentProductId === product._id && (
+              <>
+                <textarea
+                  className="form-control mb-2"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Votre commentaire..."
+                  rows="2"
+                />
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleSubmitFeedback(product._id)}
+                    disabled={isSubmitting || rating === 0}
+                  >
+                    {isSubmitting ? 'Envoi...' : 'Submit Feedback'}
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setCurrentProductId(null);
+                      setRating(0);
+                      setComment('');
+                    }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </>
+            )}
+
+            {currentProductId !== product._id && (
+              <button
+                className="btn btn-outline-primary"
+                onClick={() => setCurrentProductId(product._id)}
+              >
+                Donner votre avis
+              </button>
+            )}
+          </div>
+                 <button 
+  onClick={() => navigate('/Cmande', { 
+    state: { 
+      productName: product.name, 
+      
+    }
+  })}
+>
+  Ajouter une commande
+</button>
                 
                 <button 
         
@@ -545,21 +735,70 @@ type='number'
     ))}
 </div>
         
-            <div className="social-media-container">
-      <div className="social-text">RETROUVEZ-NOUS SUR</div>
-      <div className="social-icons">
-        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-          <img src="/facebook-icon.png" alt="Facebook" />
-        </a>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-          <img src="/instagram-icon.png" alt="Instagram" />
-        </a>
-        {/* Ajoutez d'autres réseaux sociaux au besoin */}
-      </div>
-    </div>
+           
             
         
         </div>
+        <div class="footer_section layout_padding">
+                   <div class="container">
+                     <div class="footer_logo"><a href="index.html"><img src="./assets/images/footer-logo.png"/></a></div>
+                     <div class="input_bt">
+                       <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email"/>
+                       <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+                     </div>
+                     <div style={styles.banner}>
+                           <h2 style={styles.title}>RETROUVEZ-NOUS SUR</h2>
+                           <div style={styles.iconsContainer}>
+                             <a 
+                               href="https://www.instagram.com" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               style={{ color: 'inherit' }}
+                             >
+                               <FaInstagram 
+                                 style={styles.icon} 
+                                 onMouseEnter={(e) => e.target.style.color = '#E1306C'} 
+                                 onMouseLeave={(e) => e.target.style.color = '#555'} 
+                               />
+                             </a>
+                             
+                             <a 
+                               href="mailto:bahaakrimi145@gmail.com"
+                               style={{ color: 'inherit' }}
+                             >
+                               <FaEnvelope 
+                                 style={styles.icon} 
+                                 onMouseEnter={(e) => e.target.style.color = '#D44638'} 
+                                 onMouseLeave={(e) => e.target.style.color = '#555'} 
+                               />
+                             </a>
+                             
+                             <a 
+                               href="https://www.facebook.com" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               style={{ color: 'inherit' }}
+                             >
+                               <FaFacebook 
+                                 style={styles.icon} 
+                                 onMouseEnter={(e) => e.target.style.color = '#4267B2'} 
+                                 onMouseLeave={(e) => e.target.style.color = '#555'} 
+                               />
+                             </a>
+                           </div>
+                         </div>
+                     <div class="footer_menu">
+                       <ul>
+                         <li><a href="#">Best Sellers</a></li>
+                         <li><a href="#">Gift Ideas</a></li>
+                         <li><a href="#">New Releases</a></li>
+                         <li><a href="#">Today's Deals</a></li>
+                         <li><a href="#">Customer Service</a></li>
+                       </ul>
+                     </div>
+                     <div class="location_main">Help Line Number : <a href="#">+216 123 456 78</a></div>
+                   </div>
+                 </div>
       
       </CartProvider>
           
