@@ -458,15 +458,16 @@ function Jewellery() {
 
             {/* Bouton élargi */}
             <div style={{ textAlign: 'center' }}>
-                <button 
-  onClick={() => navigate('/Cmande', { 
-    state: { 
-      productName: product.name, 
-      
+              <button
+  onClick={() => navigate('/Cmande', {
+    state: {
+      productName: product.name,
+      productId: product._id, // Assurez-vous que c'est bien _id et pas product_id
+      productPrice: product.price
     }
   })}
 >
-  Ajouter une commande
+  Commander ce produit
 </button>
                 <button 
               onClick={() => addToCart({

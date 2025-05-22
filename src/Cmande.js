@@ -1,296 +1,281 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { saveAs } from 'file-saver';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { jsPDF } from 'jspdf';
 
-const Commande = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        model: '',
-        prix: '',
-        matricula: '',
-        tel: '',
-        email: ''
+const AjoutCommande = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [formData, setFormData] = useState({
+    model: '',
+    prix: '',
+    produits: [],
+    matricula: '',
+    tel: '',
+    email: '',
+    owner: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const product = location.state;
+
+    setFormData({
+      model: product?.productName || '',
+      prix: product?.productPrice || '',
+      produits: product?.productId ? [product.productId] : [],
+      matricula: user?.username || '',
+      tel: user?.age?.toString() || '',
+      email: user?.email || '',
+      owner: user?._id || ''
     });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-    const [factureData, setFactureData] = useState(null);
+  }, [location.state]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+  const generateFacturePDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(20);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Facture de Commande', 105, 20, { align: 'center' });
+    
+    doc.setDrawColor(200, 200, 200);
+    doc.line(20, 25, 190, 25);
+    
+    doc.setFontSize(12);
+    doc.text(`Référence: CMD-${Date.now()}`, 20, 35);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 45);
+    
+    doc.setFontSize(14);
+    doc.text('Détails de la commande:', 20, 60);
+    doc.setFontSize(12);
+    doc.text(`Modèle: ${formData.model}`, 20, 70);
+    doc.text(`Prix: ${formData.prix} TND`, 20, 80);
+    doc.text(`Référence produit: ${formData.matricula}`, 20, 90);
+    
+    doc.setFontSize(14);
+    doc.text('Informations client:', 20, 110);
+    doc.setFontSize(12);
+    doc.text(`Email: ${formData.email}`, 20, 120);
+    doc.text(`Téléphone: ${formData.tel}`, 20, 130);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(50, 50, 150);
+    doc.text('Statut: En attente de traitement', 20, 150);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Colis sera livré dans les 48 heures', 105, 180, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Merci pour votre commande!', 105, 190, { align: 'center' });
+    
+    doc.save(`facture_${Date.now()}.pdf`);
+  };
 
-    const generateFacture = (commandeData) => {
-        const factureContent = `
-            ==============================
-            FACTURE - COMMANDE ${commandeData.reference}
-            ==============================
-            
-            Date: ${new Date().toLocaleDateString()}
-            
-            DÉTAILS DE LA COMMANDE:
-            -------------------------------
-            Modèle: ${formData.model}
-            Prix: ${formData.prix} DH
-            Référence: ${formData.matricula}
-            
-            INFORMATIONS CLIENT:
-            -------------------------------
-            Email: ${formData.email}
-            Téléphone: ${formData.tel}
-            
-            Statut: En attente de traitement
-            
-            Merci pour votre commande!
-        `;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-        const blob = new Blob([factureContent], { type: 'text/plain;charset=utf-8' });
-        saveAs(blob, `facture_${commandeData.reference}.txt`);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.prix || isNaN(formData.prix)) {
+      setMessage("Veuillez entrer un prix valide");
+      return;
+    }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
+    setLoading(true);
 
-        try {
-            if (!formData.email.includes('@')) {
-                throw new Error('Veuillez entrer un email valide');
-            }
-
-            const response = await axios.post('http://localhost:5000/commande/add', formData);
-            
-            if (response.data.success) {
-                setSuccess(true);
-                setFactureData(response.data);
-                generateFacture(response.data);
-                
-                setTimeout(() => {
-                    setFormData({
-                        model: '',
-                        prix: '',
-                        matricula: '',
-                        tel: '',
-                        email: ''
-                    });
-                    setSuccess(false);
-                }, 5000);
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Une erreur est survenue');
-        } finally {
-            setLoading(false);
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.post('http://localhost:5000/commande/add', {
+        ...formData,
+        prix: Number(formData.prix)
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
-    };
+      });
 
-    return (
-        <div style={{
-            maxWidth: '600px',
-            margin: '2rem auto',
-            padding: '2rem',
-            backgroundColor: '#fff',
-            borderRadius: '8px',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-            fontFamily: 'Arial, sans-serif'
+      setMessage(response.data.message);
+      generateFacturePDF();
+      setTimeout(() => navigate('/commandes'), 2000);
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Erreur lors de la création de la commande');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Styles CSS
+  const styles = {
+    container: {
+      maxWidth: '600px',
+      margin: '0 auto',
+      padding: '20px',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#f9f9f9',
+      borderRadius: '8px',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+    },
+    title: {
+      color: '#333',
+      textAlign: 'center',
+      marginBottom: '20px',
+      borderBottom: '1px solid #eee',
+      paddingBottom: '10px'
+    },
+    message: {
+      padding: '10px',
+      borderRadius: '4px',
+      marginBottom: '20px',
+      textAlign: 'center'
+    },
+    formGroup: {
+      marginBottom: '15px'
+    },
+    label: {
+      display: 'block',
+      marginBottom: '5px',
+      fontWeight: 'bold',
+      color: '#555'
+    },
+    input: {
+      width: '100%',
+      padding: '10px',
+      border: '1px solid #ddd',
+      borderRadius: '4px',
+      fontSize: '16px'
+    },
+    inputReadOnly: {
+      width: '100%',
+      padding: '10px',
+      backgroundColor: '#f0f0f0',
+      border: '1px solid #ddd',
+      borderRadius: '4px',
+      fontSize: '16px',
+      color: '#666'
+    },
+    button: {
+      padding: '12px 20px',
+      backgroundColor: '#4CAF50',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '16px',
+      width: '100%',
+      marginTop: '10px'
+    },
+    buttonDisabled: {
+      backgroundColor: '#cccccc',
+      cursor: 'not-allowed'
+    },
+    divider: {
+      borderTop: '1px solid #eee',
+      margin: '20px 0'
+    }
+  };
+
+  return (
+    <div style={styles.container}>
+      <h2 style={styles.title}>Nouvelle Commande</h2>
+      
+      {message && (
+        <div style={{ 
+          ...styles.message,
+          color: message.includes('succès') ? 'green' : 'red',
+          backgroundColor: message.includes('succès') ? '#e6ffe6' : '#ffe6e6'
         }}>
-            <h1 style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                marginBottom: '1.5rem',
-                textAlign: 'center',
-                color: '#333'
-            }}>Passer une commande</h1>
-            
-            {error && (
-                <div style={{
-                    backgroundColor: '#fee2e2',
-                    border: '1px solid #fca5a5',
-                    color: '#dc2626',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '0.375rem',
-                    marginBottom: '1rem'
-                }}>
-                    {error}
-                </div>
-            )}
-            
-            {success && factureData && (
-                <div style={{
-                    backgroundColor: '#dcfce7',
-                    border: '1px solid #86efac',
-                    color: '#166534',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '0.375rem',
-                    marginBottom: '1rem'
-                }}>
-                    <p>Commande enregistrée avec succès!</p>
-                    <p>Référence: {factureData.reference}</p>
-                    <p>Votre facture a été téléchargée automatiquement.</p>
-                </div>
-            )}
-            
-            <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
-                <div>
-                    <label htmlFor="model" style={{
-                        display: 'block',
-                        marginBottom: '0.5rem',
-                        fontWeight: '600',
-                        color: '#374151'
-                    }}>Modèle:</label>
-                    <input
-                        type="text"
-                        id="model"
-                        name="model"
-                        value={formData.model}
-                        onChange={handleChange}
-                        required
-                        style={{
-                            width: '100%',
-                            padding: '0.5rem 0.75rem',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0.375rem',
-                            outline: 'none',
-                            transition: 'border-color 0.2s',
-                            boxSizing: 'border-box'
-                        }}
-                        placeholder="Ex: PlayStation 5"
-                    />
-                </div>
-                
-                <div>
-                    <label htmlFor="prix" style={{
-                        display: 'block',
-                        marginBottom: '0.5rem',
-                        fontWeight: '600',
-                        color: '#374151'
-                    }}>Prix (DH):</label>
-                    <input
-                        type="number"
-                        id="prix"
-                        name="prix"
-                        value={formData.prix}
-                        onChange={handleChange}
-                        required
-                        style={{
-                            width: '100%',
-                            padding: '0.5rem 0.75rem',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0.375rem',
-                            outline: 'none',
-                            transition: 'border-color 0.2s',
-                            boxSizing: 'border-box'
-                        }}
-                        placeholder="Ex: 4999"
-                    />
-                </div>
-                
-                <div>
-                    <label htmlFor="matricula" style={{
-                        display: 'block',
-                        marginBottom: '0.5rem',
-                        fontWeight: '600',
-                        color: '#374151'
-                    }}>Matricule/Référence:</label>
-                    <input
-                        type="text"
-                        id="matricula"
-                        name="matricula"
-                        value={formData.matricula}
-                        onChange={handleChange}
-                        required
-                        style={{
-                            width: '100%',
-                            padding: '0.5rem 0.75rem',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0.375rem',
-                            outline: 'none',
-                            transition: 'border-color 0.2s',
-                            boxSizing: 'border-box'
-                        }}
-                        placeholder="Ex: CMD-2024-001"
-                    />
-                </div>
-                
-                <div>
-                    <label htmlFor="email" style={{
-                        display: 'block',
-                        marginBottom: '0.5rem',
-                        fontWeight: '600',
-                        color: '#374151'
-                    }}>Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        style={{
-                            width: '100%',
-                            padding: '0.5rem 0.75rem',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0.375rem',
-                            outline: 'none',
-                            transition: 'border-color 0.2s',
-                            boxSizing: 'border-box'
-                        }}
-                        placeholder="Ex: client@example.com"
-                    />
-                </div>
-                
-                <div>
-                    <label htmlFor="tel" style={{
-                        display: 'block',
-                        marginBottom: '0.5rem',
-                        fontWeight: '600',
-                        color: '#374151'
-                    }}>Téléphone:</label>
-                    <input
-                        type="tel"
-                        id="tel"
-                        name="tel"
-                        value={formData.tel}
-                        onChange={handleChange}
-                        required
-                        style={{
-                            width: '100%',
-                            padding: '0.5rem 0.75rem',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0.375rem',
-                            outline: 'none',
-                            transition: 'border-color 0.2s',
-                            boxSizing: 'border-box'
-                        }}
-                        placeholder="Ex: 0612345678"
-                    />
-                </div>
-                
-                <button
-                    type="submit"
-                    disabled={loading}
-                    style={{
-                        width: '100%',
-                        padding: '0.5rem 1rem',
-                        backgroundColor: loading ? '#93c5fd' : '#2563eb',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        fontWeight: '600',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        transition: 'background-color 0.2s',
-                        marginTop: '1rem'
-                    }}
-                >
-                    {loading ? 'Envoi en cours...' : 'Envoyer et générer la facture'}
-                </button>
-            </form>
+          {message}
         </div>
-    );
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Modèle du produit:</label>
+          <input
+            type="text"
+            value={formData.model}
+            readOnly
+            style={styles.inputReadOnly}
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Prix (TND):</label>
+          <input
+            type="number"
+            name="prix"
+            value={formData.prix}
+            onChange={handleChange}
+            required
+            min="0"
+            step="0.01"
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Matricule:</label>
+          <input
+            type="text"
+            name="matricula"
+            value={formData.matricula}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          />
+        </div>
+
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Téléphone:</label>
+          <input
+            type="tel"
+            name="tel"
+            value={formData.tel}
+            onChange={handleChange}
+            required
+            style={styles.input}
+          />
+        </div>
+
+        <input type="hidden" name="owner" value={formData.owner} />
+        <input type="hidden" name="produits" value={formData.produits} />
+
+        <div style={styles.divider}></div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            ...styles.button,
+            ...(loading ? styles.buttonDisabled : {})
+          }}
+        >
+          {loading ? 'En cours...' : 'Ajouter la commande'}
+        </button>
+      </form>
+    </div>
+  );
 };
 
-export default Commande;
+export default AjoutCommande;
