@@ -3,6 +3,76 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 
+// Styles CSS
+const styles = {
+  container: {
+    maxWidth: '600px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f9f9f9',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  },
+  title: {
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: '20px',
+    borderBottom: '1px solid #eee',
+    paddingBottom: '10px'
+  },
+  message: {
+    padding: '10px',
+    borderRadius: '4px',
+    marginBottom: '20px',
+    textAlign: 'center'
+  },
+  formGroup: {
+    marginBottom: '15px'
+  },
+  label: {
+    display: 'block',
+    marginBottom: '5px',
+    fontWeight: 'bold',
+    color: '#555'
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '16px'
+  },
+  inputReadOnly: {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: '#f0f0f0',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '16px',
+    color: '#666'
+  },
+  button: {
+    padding: '12px 20px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    width: '100%',
+    marginTop: '10px'
+  },
+  buttonDisabled: {
+    backgroundColor: '#cccccc',
+    cursor: 'not-allowed'
+  },
+  divider: {
+    borderTop: '1px solid #eee',
+    margin: '20px 0'
+  }
+};
+
 const AjoutCommande = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,7 +103,7 @@ const AjoutCommande = () => {
     });
   }, [location.state]);
 
-  const generateFacturePDF = () => {
+  const generateFacturePDF = (commandeId) => {
     const doc = new jsPDF();
     
     doc.setFontSize(20);
@@ -44,7 +114,7 @@ const AjoutCommande = () => {
     doc.line(20, 25, 190, 25);
     
     doc.setFontSize(12);
-    doc.text(`Référence: CMD-${Date.now()}`, 20, 35);
+    doc.text(`Référence: ${commandeId}`, 20, 35);
     doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 45);
     
     doc.setFontSize(14);
@@ -72,7 +142,7 @@ const AjoutCommande = () => {
     doc.setTextColor(100, 100, 100);
     doc.text('Merci pour votre commande!', 105, 190, { align: 'center' });
     
-    doc.save(`facture_${Date.now()}.pdf`);
+    doc.save(`facture_${commandeId}.pdf`);
   };
 
   const handleChange = (e) => {
@@ -89,97 +159,67 @@ const AjoutCommande = () => {
     }
 
     setLoading(true);
+    setMessage('');
 
     try {
       const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
       
-      const response = await axios.post('http://localhost:5000/commande/add', {
-        ...formData,
-        prix: Number(formData.prix)
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      // 1. Création de la commande
+      const { data: newCommande } = await axios.post(
+        'http://localhost:5000/commande/add', 
+        {
+          ...formData,
+          prix: Number(formData.prix),
+          owner: user._id // Ajout explicite du propriétaire
+        }, 
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
 
-      setMessage(response.data.message);
-      generateFacturePDF();
+      // Vérification stricte de la réponse
+      if (!newCommande?._id) {
+        throw new Error("La structure de réponse du serveur est invalide");
+      }
+
+      // 2. Affectation de la commande à l'utilisateur
+      await axios.put(
+        'http://localhost:5000/commande/affect',
+        {
+          userId: user._id,
+          commandeId: newCommande._id
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // 3. Génération du PDF
+      generateFacturePDF(newCommande._id);
+      
+      setMessage("Commande créée avec succès! Redirection...");
       setTimeout(() => navigate('/commandes'), 2000);
+      
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Erreur lors de la création de la commande');
+      console.error('Erreur complète:', {
+        message: error.message,
+        response: error.response?.data,
+        stack: error.stack
+      });
+      
+      setMessage(
+        error.response?.data?.message || 
+        "Échec de la création de commande. Veuillez réessayer."
+      );
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Styles CSS
-  const styles = {
-    container: {
-      maxWidth: '600px',
-      margin: '0 auto',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-    },
-    title: {
-      color: '#333',
-      textAlign: 'center',
-      marginBottom: '20px',
-      borderBottom: '1px solid #eee',
-      paddingBottom: '10px'
-    },
-    message: {
-      padding: '10px',
-      borderRadius: '4px',
-      marginBottom: '20px',
-      textAlign: 'center'
-    },
-    formGroup: {
-      marginBottom: '15px'
-    },
-    label: {
-      display: 'block',
-      marginBottom: '5px',
-      fontWeight: 'bold',
-      color: '#555'
-    },
-    input: {
-      width: '100%',
-      padding: '10px',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '16px'
-    },
-    inputReadOnly: {
-      width: '100%',
-      padding: '10px',
-      backgroundColor: '#f0f0f0',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      fontSize: '16px',
-      color: '#666'
-    },
-    button: {
-      padding: '12px 20px',
-      backgroundColor: '#4CAF50',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '16px',
-      width: '100%',
-      marginTop: '10px'
-    },
-    buttonDisabled: {
-      backgroundColor: '#cccccc',
-      cursor: 'not-allowed'
-    },
-    divider: {
-      borderTop: '1px solid #eee',
-      margin: '20px 0'
     }
   };
 

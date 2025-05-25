@@ -40,9 +40,8 @@ import JeuxP  from './JeuxP'
 import App2 from './App2'
 import Profil from './Profil'
 import RatingStars from './RatingStars'
-
-
-import { CartProvider } from './context/CartContext';
+import ProductRecommendations from './components/ProductRecommendations'
+import TopProducts from './components/TopProducts'
 
 
 

@@ -111,96 +111,9 @@ function UserManagement() {
 
       <h2 className="mb-4 text-center">Gestion des Utilisateurs Clients</h2>
 
-      {/* Formulaire d'ajout */}
-      <div className="card mb-4">
-        <div className="card-header bg-primary text-white">
-          <h5>Ajouter un Nouveau Client</h5>
-        </div>
-        <div className="card-body">
-          <form onSubmit={handleAddUser}>
-            <div className="row g-3">
-              <div className="col-md-3">
-                <label className="form-label">Nom d'utilisateur</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="username"
-                  value={newUser.username}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  name="email"
-                  value={newUser.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-2">
-                <label className="form-label">Mot de passe</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  value={newUser.password}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-2">
-                <label className="form-label">Âge</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="age"
-                  value={newUser.age}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="col-md-2 d-flex align-items-end">
-                <button type="submit" className="btn btn-success">
-                  Ajouter
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+     
 
-      {/* Barre de recherche */}
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Rechercher par nom d'utilisateur..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className="btn btn-outline-secondary" onClick={handleSearch}>
-          Rechercher
-        </button>
-        <button className="btn btn-outline-danger" onClick={() => {
-          setSearchTerm('');
-          fetchUsers();
-        }}>
-          Réinitialiser
-        </button>
-      </div>
-
-      {error && (
-        <div className="alert alert-danger">
-          <strong>Erreur :</strong> {error}
-          <button className="btn btn-sm btn-warning ms-3" onClick={fetchUsers}>
-            Réessayer
-          </button>
-        </div>
-      )}
+  
 
       {/* Tableau des utilisateurs */}
       {users.length === 0 ? (

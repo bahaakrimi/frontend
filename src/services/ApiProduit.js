@@ -20,3 +20,22 @@ export async function filterProduitsByPrice(minPrice, maxPrice) {
         params: { minPrice, maxPrice }
     });
 }
+export const getTopProducts = async () => {
+    try {
+        const response = await axios.get('/api/recommendations/top-products');
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching top products", error);
+        return { top6: [], topByCategory: {} };
+    }
+};
+
+export const getRecommendations = async (productId) => {
+    try {
+        const response = await axios.get(`/api/recommendations/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching recommendations", error);
+        return [];
+    }
+};

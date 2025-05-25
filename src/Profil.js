@@ -12,6 +12,8 @@ const Profil = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const navigate = useNavigate();
 
   // Styles CSS modernes
@@ -181,6 +183,28 @@ const Profil = () => {
       fontSize: '1.2rem',
       color: '#7f8c8d'
     },
+    orderContainer: {
+      backgroundColor: '#f8f9fa',
+      borderRadius: '8px',
+      padding: '1rem',
+      marginTop: '1rem'
+    },
+    orderItem: {
+      padding: '1rem',
+      borderBottom: '1px solid #eee',
+      marginBottom: '0.5rem'
+    },
+    orderHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginBottom: '0.5rem'
+    },
+    orderStatus: {
+      padding: '0.3rem 0.6rem',
+      borderRadius: '12px',
+      fontSize: '0.8rem',
+      fontWeight: '600'
+    },
     '@media (max-width: 768px)': {
       container: {
         margin: '1rem',
@@ -200,7 +224,7 @@ const Profil = () => {
   };
 
   useEffect(() => {
-    const loadUserData = () => {
+    const loadUserData = async () => {
       try {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -211,6 +235,11 @@ const Profil = () => {
             email: user.email,
             age: user.age || ''
           });
+          
+          // Charger les commandes si l'utilisateur en a
+          if (user.commandes && user.commandes.length > 0) {
+            await loadUserOrders(user.commandes);
+          }
         } else {
           navigate('/login');
         }
@@ -223,6 +252,32 @@ const Profil = () => {
 
     loadUserData();
   }, [navigate]);
+
+  const loadUserOrders = async (orderIds) => {
+    try {
+      setOrdersLoading(true);
+      const ordersPromises = orderIds.map(async (orderId) => {
+        const response = await fetch(`http://localhost:5000/commande/getCommandeById/${orderId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération de la commande');
+        }
+        
+        return await response.json();
+      });
+      
+      const ordersData = await Promise.all(ordersPromises);
+      setOrders(ordersData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
 
   const handleEditClick = () => {
     setFormData({
@@ -312,6 +367,31 @@ const Profil = () => {
     navigate('/login');
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Non disponible';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'en_attente':
+        return { backgroundColor: '#fff3cd', color: '#856404' };
+      case 'livrée':
+        return { backgroundColor: '#d4edda', color: '#155724' };
+      case 'annulée':
+        return { backgroundColor: '#f8d7da', color: '#721c24' };
+      default:
+        return { backgroundColor: '#d1ecf1', color: '#0c5460' };
+    }
+  };
+
   if (loading && !editing) return <div style={styles.loading}>Chargement...</div>;
   if (!userData) return <div style={styles.container}>Utilisateur non trouvé</div>;
 
@@ -384,35 +464,90 @@ const Profil = () => {
           <div style={styles.statItem}>
             <span style={styles.statLabel}>Membre depuis:</span>
             <span style={styles.statValue}>
-              {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'Non disponible'}
+              {userData.createdAt ? formatDate(userData.createdAt) : 'Non disponible'}
             </span>
           </div>
           <div style={styles.statItem}>
             <span style={styles.statLabel}>Dernière mise à jour:</span>
             <span style={styles.statValue}>
-              {userData.updatedAt ? new Date(userData.updatedAt).toLocaleDateString() : 'Non disponible'}
+              {userData.updatedAt ? formatDate(userData.updatedAt) : 'Non disponible'}
             </span>
           </div>
           <div style={{...styles.statItem, borderBottom: 'none'}}>
             <span style={styles.statLabel}>Commandes passées:</span>
-            <span style={styles.statValue}>{userData.ordersCount || 0}</span>
+            <span style={styles.statValue}>{userData.commandes ? userData.commandes.length : 0}</span>
           </div>
         </div>
+      </div>
+
+      <div style={{ marginTop: '2.5rem' }}>
+        <h2 style={styles.sectionTitle}>Historique des commandes</h2>
+        
+        {ordersLoading ? (
+          <div style={styles.loading}>Chargement des commandes...</div>
+        ) : orders.length > 0 ? (
+          <div style={styles.orderContainer}>
+            {orders.map((order, index) => (
+              <div key={order._id} style={styles.orderItem}>
+                <div style={styles.orderHeader}>
+                  <span style={{ fontWeight: '600' }}>Commande #{index + 1}</span>
+                  <span style={{ 
+                    ...styles.orderStatus,
+                    ...getStatusColor(order.status)
+                  }}>
+                    {order.status.replace('_', ' ')}
+                  </span>
+                </div>
+                <div style={{ marginBottom: '0.3rem' }}>
+                  <span style={{ color: '#7f8c8d' }}>Modèle: </span>
+                  <span>{order.model || 'Non spécifié'}</span>
+                </div>
+                <div style={{ marginBottom: '0.3rem' }}>
+                  <span style={{ color: '#7f8c8d' }}>nbr pices: </span>
+                  <span>{order.prix ? `${order.prix} pices` : 'Non spécifié'}</span>
+                </div>
+                <div style={{ marginBottom: '0.3rem' }}>
+                  <span style={{ color: '#7f8c8d' }}>Matricule: </span>
+                  <span>{order.matricule || 'Non spécifié'}</span>
+                </div>
+                <div style={{ marginBottom: '0.3rem' }}>
+                  <span style={{ color: '#7f8c8d' }}>Téléphone: </span>
+                  <span>{order.tel || 'Non spécifié'}</span>
+                </div>
+                <div style={{ marginBottom: '0.3rem' }}>
+                  <span style={{ color: '#7f8c8d' }}>Email: </span>
+                  <span>{order.email || 'Non spécifié'}</span>
+                </div>
+                <div>
+                  <span style={{ color: '#7f8c8d' }}>Date: </span>
+                  <span>{formatDate(order.createdAt)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ 
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            textAlign: 'center',
+            color: '#7f8c8d'
+          }}>
+            Aucune commande trouvée
+          </div>
+        )}
       </div>
 
       <div style={styles.buttonGroup}>
         {editing ? (
           <>
-            <Link to="/LoginForm"><button 
+            <button 
               onClick={handleSave}
-              
               style={{ ...styles.button, ...styles.successButton }}
               disabled={loading}
             >
-           
-              {loading ? 'Enregistrement...' : 'Enregistrer'  }
-              
-            </button></Link>
+              {loading ? 'Enregistrement...' : 'Enregistrer'}
+            </button>
             <button 
               onClick={() => setEditing(false)}
               style={{ ...styles.button, ...styles.dangerButton }}
