@@ -27,6 +27,10 @@ import { useCart } from './context/CartContext';
 
 import { FaAngleDown } from 'react-icons/fa';
 
+import { Carousel } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+
 
 
 function App() {
@@ -39,6 +43,8 @@ function App() {
     
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+
+  const [username, setUsername] = useState('');
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -173,6 +179,18 @@ function App() {
     fetchProduits();
   }, []);
 
+
+  useEffect(() => {
+      const interval = setInterval(() => {
+        const nextButton = document.querySelector('.carousel-control-next');
+        if (nextButton) {
+          nextButton.click();
+        }
+      }, 3000); // Rotate every 3 seconds
+  
+      return () => clearInterval(interval);
+    }, []);
+
   if (loading) return <div className="loading">Chargement en cours...</div>;
   if (error) return <div className="error">Erreur: {error}</div>;
     const handleSearch = async () => {
@@ -246,33 +264,70 @@ function App() {
    
     <><CartProvider>
     <div class="banner_bg_main">
+       <header style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 20px',
+    backgroundColor: '#f8f9fa',
+    borderBottom: '1px solid #ddd'
+}}>
+    <div style={{ fontWeight: 'bold' }}>
+        <Link to="/Profil">
+            <i className="fa fa-user" aria-hidden="true"></i>
+            {username ? ` ${username}` : '             Profil'}
+        </Link>
+    </div>
+    <nav>
+        {/* Vos liens de navigation ici */}
+    </nav>
+</header>
       <div class="container">
+        
         <div class="header_section_top">
+          
           <div class="row">
             <div class="col-sm-12">
+                  
               <div class="custom_menu">
               <nav>
-        <ul className="main-nav">
-          <li><Link to="/app">HOME</Link></li>
-          <li><Link to="/Electronic">Electronic</Link></li>
-          <li 
-            className="fashion-item"
-            onMouseEnter={() => setShowFashionDropdown(true)}
-            onMouseLeave={() => setShowFashionDropdown(false)}
-          >
-            <Link to="/Fashion">Fashion</Link>
-            {showFashionDropdown && (
-              <ul className="fashion-dropdown">
-                <li><Link to="/Jewellery">Fashion Men</Link></li>
-                <li><Link to="/Sports">Fashion Women</Link></li>
-              </ul>
-            )}
-          </li>
-          <li><Link to="/Jewellery">Jewellery</Link></li>
-          <li><Link to="/Sports">Sports</Link></li>
-          <li><Link to="/Jeux">Jeux</Link></li>
-          <li><Link to="/JeuxP">meilleur produit</Link></li>
-        </ul>
+     <ul className="main-nav">
+  <li>
+    <Link to="/app">
+      <span className="icon">🏠</span> HOME
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Electronic">
+      <span className="icon">📱</span> Electronic
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Fashion">
+      <span className="icon">👕</span> Vêtements & Chaussures
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Jewellery">
+      <span className="icon">💎</span> Jewellery
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Sports">
+      <span className="icon">⚽</span> Sports & Loisirs
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Jeux">
+      <span className="icon">🎮</span> Jeux videos & Consoles
+    </Link>
+  </li>
+</ul>
       </nav>
              
               </div>
@@ -296,6 +351,7 @@ function App() {
   backgroundColor: '#FFD700', 
   padding: '20px', 
   borderRadius: '8px',
+  width:'14%',
   boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
 }}>
   <h2 style={{
@@ -474,40 +530,70 @@ function App() {
       </div>
       <div class="banner_section layout_padding">
         <div class="container">
-          <div id="my_slider" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <div class="row">
-                  <div class="col-sm-12">
-                    <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                    <div class="buynow_bt"><a href="buy.js">Buy Now</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="carousel-item">
-                <div class="row">
-                  <div class="col-sm-12">
-                    <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                    <div class="buynow_bt"><a href="buy">Buy Now</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="carousel-item">
-                <div class="row">
-                  <div class="col-sm-12">
-                    <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                    <div class="buynow_bt"><Link to="/Electronic">buy Now</Link></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-              <i class="fa fa-angle-left"></i>
-            </a>
-            <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-              <i class="fa fa-angle-right"></i>
-            </a>
-          </div>
+     <div className="banner_section layout_padding" style={{ padding: '20px 0' }}>
+       <div className="container">
+         <Carousel 
+           id="adCarousel"
+           indicators={true}
+           nextIcon={<FaChevronRight />}
+           prevIcon={<FaChevronLeft />}
+           style={{ 
+             backgroundColor: '#FFD700',
+             borderRadius: '10px',
+             padding: '20px'
+           }}
+         >
+           {/* Ad 1 */}
+           <Carousel.Item>
+             <div className="row justify-content-center">
+               <div className="col-md-10 text-center">
+                 <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                   GET START<br/>YOUR FAVORITE SHOPPING
+                 </h1>
+               
+               </div>
+             </div>
+           </Carousel.Item>
+ 
+           {/* Ad 2 */}
+           <Carousel.Item>
+             <div className="row justify-content-center">
+               <div className="col-md-10 text-center">
+                 <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                   SUMMER SALE<br/>UP TO 50% OFF
+                 </h1>
+               
+               </div>
+             </div>
+           </Carousel.Item>
+ 
+           {/* Ad 3 */}
+           <Carousel.Item>
+             <div className="row justify-content-center">
+               <div className="col-md-10 text-center">
+                 <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                   NEW ARRIVALS<br/>TRENDING NOW
+                 </h1>
+                
+               </div>
+             </div>
+           </Carousel.Item>
+ 
+           {/* New Ad 4 - Delivery Service */}
+           <Carousel.Item>
+             <div className="row justify-content-center">
+               <div className="col-md-10 text-center">
+                 <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                   DELIVERY IN 48H<br/>TOP SERVICE
+                 </h1>
+                 
+                 
+               </div>
+             </div>
+           </Carousel.Item>
+         </Carousel>
+       </div>
+     </div>
         </div>
       </div>
       </div>

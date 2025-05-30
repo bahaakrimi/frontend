@@ -442,7 +442,7 @@ const Profil = () => {
         </div>
 
         <div style={styles.fieldGroup}>
-          <span style={styles.label}>Âge:</span>
+          <span style={styles.label}>Tel:</span>
           {editing ? (
             <input
               type="number"

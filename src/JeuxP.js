@@ -1,81 +1,87 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Carousel } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
-const ProductFeedbackForm = () => {
-  const { productId } = useParams();
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+const AdvertisementCarousel = () => {
+  // Automatic rotation effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextButton = document.querySelector('.carousel-control-next');
+      if (nextButton) {
+        nextButton.click();
+      }
+    }, 3000); // Rotate every 3 seconds
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (rating < 1 || rating > 5) {
-      setError('Please select a rating between 1 and 5');
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError('');
-    setMessage('');
-
-    try {
-      const token = localStorage.getItem('token'); // Assuming you store JWT token in localStorage
-      const response = await axios.post(
-        `http://localhost:5000/produit/addFeedback/${productId}`,
-        { rating, comment },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      setMessage(response.data.message);
-      setRating(0);
-      setComment('');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Error submitting feedback');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="feedback-form">
-      <h3>Leave Your Feedback</h3>
-      
-      {message && <div className="alert alert-success">{message}</div>}
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <div className="rating-stars mb-3">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              className={`star ${star <= rating ? 'filled' : ''}`}
-              onClick={() => setRating(star)}
-              style={{ cursor: 'pointer', fontSize: '24px' }}
-            >
-              {star <= rating ? '★' : '☆'}
-            </span>
-          ))}
-          <span className="ms-2">{rating}/5</span>
-        </div>
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={isSubmitting || rating === 0}
+    <div className="banner_section layout_padding" style={{ padding: '20px 0' }}>
+      <div className="container">
+        <Carousel 
+          id="adCarousel"
+          indicators={true}
+          nextIcon={<FaChevronRight />}
+          prevIcon={<FaChevronLeft />}
+          style={{ 
+            backgroundColor: '#FFD700',
+            borderRadius: '10px',
+            padding: '20px'
+          }}
         >
-          {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
-        </button>
-      </form>
+          {/* Ad 1 */}
+          <Carousel.Item>
+            <div className="row justify-content-center">
+              <div className="col-md-10 text-center">
+                <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                  GET START<br/>YOUR FAVORITE SHOPPING
+                </h1>
+              
+              </div>
+            </div>
+          </Carousel.Item>
+
+          {/* Ad 2 */}
+          <Carousel.Item>
+            <div className="row justify-content-center">
+              <div className="col-md-10 text-center">
+                <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                  SUMMER SALE<br/>UP TO 50% OFF
+                </h1>
+              
+              </div>
+            </div>
+          </Carousel.Item>
+
+          {/* Ad 3 */}
+          <Carousel.Item>
+            <div className="row justify-content-center">
+              <div className="col-md-10 text-center">
+                <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                  NEW ARRIVALS<br/>TRENDING NOW
+                </h1>
+               
+              </div>
+            </div>
+          </Carousel.Item>
+
+          {/* New Ad 4 - Delivery Service */}
+          <Carousel.Item>
+            <div className="row justify-content-center">
+              <div className="col-md-10 text-center">
+                <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                  DELIVERY IN 48H<br/>TOP SERVICE
+                </h1>
+                
+                
+              </div>
+            </div>
+          </Carousel.Item>
+        </Carousel>
+      </div>
     </div>
   );
 };
 
-export default ProductFeedbackForm;
+export default AdvertisementCarousel;

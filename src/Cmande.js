@@ -249,7 +249,7 @@ const AjoutCommande = () => {
         </div>
 
         <div style={styles.formGroup}>
-          <label style={styles.label}>Prix (TND):</label>
+          <label style={styles.label}>number:</label>
           <input
             type="number"
             name="prix"

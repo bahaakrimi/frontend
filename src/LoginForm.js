@@ -22,7 +22,7 @@ const LoginForm = () => {
       console.log("res", res);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       if(res.data.user.role === "client") {
-        navigate('/App2');
+        navigate('/App');
       } else {
         navigate('/GetProduit');
       }

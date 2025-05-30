@@ -8,6 +8,14 @@ import axios from 'axios';
 import './Jeux.css';
 import { FaInstagram, FaFacebook, FaEnvelope } from 'react-icons/fa';
 
+
+import { Carousel } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+
+
+
+
 function Jewellery() {
   const { totalItems } = useCart(); // Ajoutez cette ligne
   const { addToCart } = useCart();
@@ -26,6 +34,57 @@ function Jewellery() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
+
+
+
+  const [product, setProduct] = useState(null);
+
+
+
+  useEffect(() => {
+      const fetchBestProduct = async () => {
+        try {
+          const response = await fetch('http://localhost:5000/api/recommendations/fashion');
+          
+          if (!response.ok) {
+            throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          if (data.success && data.product) {
+            const productData = {
+              ...data.product,
+              fullImageUrl: data.product.image 
+                ? `http://localhost:5000/files/${data.product.image}`
+                : null,
+              averageRating: data.product.score || 0, // Utilisez le score comme rating
+              ratingsCount: 0 // Valeur par défaut puisque non fournie dans l'API
+            };
+            setProduct(productData);
+          } else {
+            throw new Error('Données de produit invalides');
+          }
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchBestProduct();
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          const nextButton = document.querySelector('.carousel-control-next');
+          if (nextButton) {
+            nextButton.click();
+          }
+        }, 3000); // Rotate every 3 seconds
+    
+        return () => clearInterval(interval);
+      }, []);
 
 
   const handleSubmitFeedback = async (productId) => {
@@ -94,6 +153,7 @@ function Jewellery() {
 
   if (loading) return <div>Chargement en cours...</div>;
   if (error) return <div>Erreur: {error}</div>;
+  
 
   // Filtrer les produits de la catégorie "jewellery"
   const jewelleryProduits = produits.filter(produit => produit.category === 'fashion');
@@ -163,9 +223,11 @@ function Jewellery() {
     }
   };
 
+  
+
   return (
         <><CartProvider>
-                <div class="banner_bg_main">
+                <div class="banner_bg_main">  
                   <div class="container">
                     <div class="header_section_top">
                       <div class="row">
@@ -173,14 +235,42 @@ function Jewellery() {
                           <div class="custom_menu">
                          <nav>
                 <ul className="main-nav">
-                  <li><Link to="/app">HOME</Link></li>
-                  <li><Link to="/Electronic">Electronic</Link></li>
-                  <li><Link to="/Fashion">Fashion</Link></li>
-                    
-                  <li><Link to="/Jewellery">Jewellery</Link></li>
-                  <li><Link to="/Sports">Sports</Link></li>
-                  <li><Link to="/Jeux">Jeux</Link></li>
-                </ul>
+  <li>
+    <Link to="/app">
+      <span className="icon">🏠</span> HOME
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Electronic">
+      <span className="icon">📱</span> Electronic
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Fashion">
+      <span className="icon">👕</span> Vêtements & Chaussures
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Jewellery">
+      <span className="icon">💎</span> Jewellery
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Sports">
+      <span className="icon">⚽</span> Sports & Loisirs
+    </Link>
+  </li>
+  
+  <li>
+    <Link to="/Jeux">
+      <span className="icon">🎮</span> Jeux videos & Consoles
+    </Link>
+  </li>
+</ul>
               </nav>
                          
                           </div>
@@ -199,6 +289,137 @@ function Jewellery() {
                     </div>
                   </div>
                   <div class="header_section">
+<div style={{
+  maxWidth: '280px',
+  margin: '0 auto',
+  fontFamily: 'Arial, sans-serif',
+  padding: '10px'
+}}>
+
+  {/* Carte produit */}
+  <div style={{
+    background: 'white',
+    borderRadius: '8px',
+    padding: '0', // Modifié pour permettre le positionnement de la bande
+    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+    marginBottom: '15px',
+    position: 'relative' // Ajouté pour positionner la bande
+  }}>
+    
+    {/* Bande "MEILLEUR PRODUIT" */}
+    <div style={{
+      background: '#da1b60',
+      color: 'white',
+      textAlign: 'center',
+      padding: '4px 0',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      borderRadius: '8px 8px 0 0',
+      marginBottom: '10px'
+    }}>
+      <span >👑</span>
+      MEILLEUR PRODUIT
+    </div>
+
+    {/* Contenu principal de la carte */}
+    <div style={{ padding: '10px' }}>
+      {/* Image produit compacte */}
+      <div style={{
+        width: '100%',
+        height: '100px',
+        marginBottom: '10px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden'
+      }}>
+        {product?.fullImageUrl ? (
+          <img 
+            src={product.fullImageUrl}
+            alt={product.name}
+            style={{
+              maxHeight: '100%',
+              maxWidth: '100%',
+              objectFit: 'contain'
+            }}
+          />
+        ) : (
+          <div style={{
+            color: '#999',
+            fontSize: '12px'
+          }}>
+            Image non disponible
+          </div>
+        )}
+      </div>
+
+      {/* Détails produit */}
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          fontSize: '16px',
+          fontWeight: 'bold',
+          marginBottom: '5px'
+        }}>{product?.name }</div>
+        
+        <div style={{
+          fontSize: '18px',
+          fontWeight: 'bold',
+          color: '#da1b60',
+          marginBottom: '5px'
+        }}>{product?.price} TND</div>
+        
+        <div style={{
+          color: '#ffc107',
+          fontSize: '16px',
+          marginBottom: '10px'
+        }}>★★★★★</div>
+        
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button style={{
+            flex: 1,
+            background: '#da1b60',
+            color: 'white',
+            border: 'none',
+            padding: '6px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+           onClick={() => navigate('/Cmande', { 
+    state: { 
+      productName: product.name, 
+      
+    }
+  })}>
+            Commander
+          </button>
+          
+          <button style={{
+            flex: 1,
+            background: '#333',
+            color: 'white',
+            border: 'none',
+            padding: '6px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+          onClick={() => addToCart({
+            id: product._id,
+            name: product.name,
+            price: product.promotion === 'oui' ? product.promotionprice : product.price,
+            image: product.imageUrl
+          })}>
+            Au panier
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
                     <div class="container">
                       <div class="containt_main">
                         <div id="mySidenav" class="sidenav">
@@ -207,7 +428,7 @@ function Jewellery() {
                           <a href="Electronic">Electronics</a>
                           
                         </div>
-                        <span class="toggle_icon" onclick="openNav()"><img src="./assets/images/toggle-icon.png" /></span>
+                        
                         <div class="dropdown">
                           
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -252,11 +473,7 @@ function Jewellery() {
       </div>
                         </div>
                         <div class="header_box">
-                          <div class="lang_box ">
-                            <a href="#" title="Language" class="nav-link" data-toggle="dropdown" aria-expanded="true">
-                              <img src="./assets/images/flag-uk.png" alt="flag" class="mr-2 " title="United Kingdom" /> English <i class="fa fa-angle-down ml-2" aria-hidden="true"></i>
-                            </a>
-                          </div>
+                          
                           <div class="login_menu">
                             <ul>
                               <Link to="/Panier">
@@ -274,43 +491,71 @@ function Jewellery() {
                       </div>
                     </div>
                   </div>
-                  <div class="banner_section layout_padding">
-                    <div class="container">
-                      <div id="my_slider" class="carousel slide" data-ride="carousel">
-                        <div class="carousel-inner">
-                          <div class="carousel-item active">
-                            <div class="row">
-                              <div class="col-sm-12">
-                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                                <div class="buynow_bt"><a href="buy.js">Buy Now</a></div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="carousel-item">
-                            <div class="row">
-                              <div class="col-sm-12">
-                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                                <div class="buynow_bt"><a href="buy">Buy Now</a></div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="carousel-item">
-                            <div class="row">
-                              <div class="col-sm-12">
-                                <h1 class="banner_taital">Get Start <br></br>Your favriot shoping</h1>
-                                <div class="buynow_bt"><Link to="/Electronic">aaauy Now</Link></div>
-                              </div>
-                            </div>
+                  <div class="banner_section layout_padding" >
+                    <div className="banner_section layout_padding" style={{ padding: '20px 0' }}>
+                          <div className="container">
+                            <Carousel 
+                              id="adCarousel"
+                              indicators={true}
+                              nextIcon={<FaChevronRight />}
+                              prevIcon={<FaChevronLeft />}
+                              style={{ 
+                                backgroundColor: '#FFD700',
+                                borderRadius: '10px',
+                                padding: '20px'
+                              }}
+                            >
+                              {/* Ad 1 */}
+                              <Carousel.Item>
+                                <div className="row justify-content-center">
+                                  <div className="col-md-10 text-center">
+                                    <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                                      GET START<br/>YOUR FAVORITE SHOPPING
+                                    </h1>
+                                  
+                                  </div>
+                                </div>
+                              </Carousel.Item>
+                    
+                              {/* Ad 2 */}
+                              <Carousel.Item>
+                                <div className="row justify-content-center">
+                                  <div className="col-md-10 text-center">
+                                    <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                                      SUMMER SALE<br/>UP TO 50% OFF
+                                    </h1>
+                                  
+                                  </div>
+                                </div>
+                              </Carousel.Item>
+                    
+                              {/* Ad 3 */}
+                              <Carousel.Item>
+                                <div className="row justify-content-center">
+                                  <div className="col-md-10 text-center">
+                                    <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                                      NEW ARRIVALS<br/>TRENDING NOW
+                                    </h1>
+                                   
+                                  </div>
+                                </div>
+                              </Carousel.Item>
+                    
+                              {/* New Ad 4 - Delivery Service */}
+                              <Carousel.Item>
+                                <div className="row justify-content-center">
+                                  <div className="col-md-10 text-center">
+                                    <h1 className="banner_taital" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+                                      DELIVERY IN 48H<br/>TOP SERVICE
+                                    </h1>
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </Carousel.Item>
+                            </Carousel>
                           </div>
                         </div>
-                        <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-                          <i class="fa fa-angle-left"></i>
-                        </a>
-                        <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-                          <i class="fa fa-angle-right"></i>
-                        </a>
-                      </div>
-                    </div>
                   </div>
                   </div>
       <div className="fashion_section">
@@ -319,6 +564,8 @@ function Jewellery() {
             <div className="carousel-item active">
               <div className="container">
                 <h1 className="fashion_taital">Electronic</h1>
+             
+                
                 <div className="fashion_section_2">
                    {searchError && (
     <p style={{ color: 'red', marginBottom: '25px', textAlign: 'center', fontSize: '1.1rem' }}>{searchError}</p>
@@ -458,16 +705,16 @@ function Jewellery() {
 
             {/* Bouton élargi */}
             <div style={{ textAlign: 'center' }}>
-          
-            <button 
-  onClick={() => navigate('/Cmande', { 
-    state: { 
-      productName: product.name, 
-      
+              <button
+  onClick={() => navigate('/Cmande', {
+    state: {
+      productName: product.name,
+      productId: product._id, // Assurez-vous que c'est bien _id et pas product_id
+      productPrice: product.price
     }
   })}
 >
-  Ajouter une commande
+  Commander ce produit
 </button>
                 <button 
               onClick={() => addToCart({
@@ -588,7 +835,6 @@ function Jewellery() {
           </div>
 
           <div className="product-actions">
-      
             <button 
   onClick={() => navigate('/Cmande', { 
     state: { 

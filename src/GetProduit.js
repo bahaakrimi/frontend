@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ProduitManager = () => {
+   const navigate = useNavigate();
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -151,6 +153,14 @@ const ProduitManager = () => {
 
   if (loading) return <div className="loading">Chargement en cours...</div>;
   if (error) return <div className="error">Erreur: {error}</div>;
+
+  
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
 
   return (
     <>
@@ -397,6 +407,12 @@ const ProduitManager = () => {
             <Link className="nav-link" to="/Userlist">Utilisateurs</Link>
             <Link className="nav-link" to="/GetProduit">Produits</Link>
             <Link className="nav-link" to="/Getcomandlist">Commandes</Link>
+            <button 
+              onClick={handleLogout}
+              
+            >
+              Déconnexion
+            </button>
           </div>
         </nav>
         
