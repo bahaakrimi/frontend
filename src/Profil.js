@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Profil = () => {
   const [userData, setUserData] = useState(null);
@@ -205,6 +205,18 @@ const Profil = () => {
       fontSize: '0.8rem',
       fontWeight: '600'
     },
+    productItem: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginBottom: '0.3rem',
+      paddingLeft: '1rem'
+    },
+    productName: {
+      fontWeight: '500'
+    },
+    productQuantity: {
+      color: '#7f8c8d'
+    },
     '@media (max-width: 768px)': {
       container: {
         margin: '1rem',
@@ -223,6 +235,33 @@ const Profil = () => {
     }
   };
 
+  // Fonction pour formater la date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Non disponible';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Fonction pour obtenir la couleur selon le statut
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'en_attente':
+        return { backgroundColor: '#fff3cd', color: '#856404' };
+      case 'livrée':
+        return { backgroundColor: '#d4edda', color: '#155724' };
+      case 'annulée':
+        return { backgroundColor: '#f8d7da', color: '#721c24' };
+      default:
+        return { backgroundColor: '#d1ecf1', color: '#0c5460' };
+    }
+  };
+
   useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -236,7 +275,6 @@ const Profil = () => {
             age: user.age || ''
           });
           
-          // Charger les commandes si l'utilisateur en a
           if (user.commandes && user.commandes.length > 0) {
             await loadUserOrders(user.commandes);
           }
@@ -267,7 +305,8 @@ const Profil = () => {
           throw new Error('Erreur lors de la récupération de la commande');
         }
         
-        return await response.json();
+        const orderData = await response.json();
+        return orderData;
       });
       
       const ordersData = await Promise.all(ordersPromises);
@@ -365,31 +404,6 @@ const Profil = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login');
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Non disponible';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'en_attente':
-        return { backgroundColor: '#fff3cd', color: '#856404' };
-      case 'livrée':
-        return { backgroundColor: '#d4edda', color: '#155724' };
-      case 'annulée':
-        return { backgroundColor: '#f8d7da', color: '#721c24' };
-      default:
-        return { backgroundColor: '#d1ecf1', color: '#0c5460' };
-    }
   };
 
   if (loading && !editing) return <div style={styles.loading}>Chargement...</div>;
@@ -498,17 +512,28 @@ const Profil = () => {
                     {order.status.replace('_', ' ')}
                   </span>
                 </div>
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <span style={{ color: '#7f8c8d' }}>Produits: </span>
+                  <div style={{ marginTop: '0.5rem' }}>
+                    {order.products && order.products.length > 0 ? (
+                      order.products.map((product, idx) => (
+                        <div key={idx} style={styles.productItem}>
+                          <span style={styles.productName}>
+                            {product.productName || 'Produit inconnu'}
+                          </span>
+                          <span style={styles.productQuantity}>
+                            x{product.quantity}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <span>Aucun produit trouvé</span>
+                    )}
+                  </div>
+                </div>
                 <div style={{ marginBottom: '0.3rem' }}>
                   <span style={{ color: '#7f8c8d' }}>Modèle: </span>
                   <span>{order.model || 'Non spécifié'}</span>
-                </div>
-                <div style={{ marginBottom: '0.3rem' }}>
-                  <span style={{ color: '#7f8c8d' }}>nbr pices: </span>
-                  <span>{order.prix ? `${order.prix} pices` : 'Non spécifié'}</span>
-                </div>
-                <div style={{ marginBottom: '0.3rem' }}>
-                  <span style={{ color: '#7f8c8d' }}>Matricule: </span>
-                  <span>{order.matricule || 'Non spécifié'}</span>
                 </div>
                 <div style={{ marginBottom: '0.3rem' }}>
                   <span style={{ color: '#7f8c8d' }}>Téléphone: </span>
@@ -520,7 +545,7 @@ const Profil = () => {
                 </div>
                 <div>
                   <span style={{ color: '#7f8c8d' }}>Date: </span>
-                  <span>{formatDate(order.createdAt)}</span>
+                  <span>{formatDate(order.createAt || order.createdAt)}</span>
                 </div>
               </div>
             ))}

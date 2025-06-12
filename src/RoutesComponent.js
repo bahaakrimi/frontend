@@ -39,9 +39,11 @@ import PanierPage from './PanierPage'
 import JeuxP  from './JeuxP'
 import App2 from './App2'
 import Profil from './Profil'
+import Getcommandadmin from './Getcommandadmin'
 import RatingStars from './RatingStars'
 import ProductRecommendations from './components/ProductRecommendations'
 import TopProducts from './components/TopProducts'
+
 
 
 
@@ -83,9 +85,10 @@ export default function RoutesComponent() {
       <Route path="/Xbox" element={<Xbox/>}></Route>
       <Route path="/Neklesh" element={<Neklesh/>}></Route>
       <Route path="/Women" element={<Women/>}></Route>
-      <Route path="/JeuxP" element={<JeuxP/>}></Route>
+      <Route path="/commentaires/:id" element={<JeuxP/>}></Route>
       <Route path="/App2" element={< App2/>}></Route>
       <Route path="/Profil" element={< Profil/>}></Route>
+      <Route path="/Getcommandadmin" element={< Getcommandadmin/>}></Route>
     
 
       <Route path="/Jhumka" element={<Jhumka/>}></Route>

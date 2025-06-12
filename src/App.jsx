@@ -725,6 +725,39 @@ function App() {
                 flexDirection: 'column',
                 gap: '10px'
             }}>
+              {/* Lien vers les commentaires */}
+<div style={{ 
+    marginTop: '10px',
+    textAlign: 'center'
+}}>
+    <a 
+        href={`/commentaires/${product._id}`} 
+        style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#3498db',
+            textDecoration: 'none',
+            fontSize: '0.9rem'
+        }}
+    >
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="16" 
+            height="16" 
+            fill="currentColor" 
+            viewBox="0 0 16 16"
+            style={{marginRight: '5px'}}
+        >
+            <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-2.5a2 2 0 0 0-1.6.8L8 14.333 6.1 11.8a2 2 0 0 0-1.6-.8H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5a1 1 0 0 1 .8.4l1.9 2.533a1 1 0 0 0 1.6 0l1.9-2.533a1 1 0 0 1 .8-.4H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+            <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+        Voir les commentaires
+    </a>
+</div>
+              
+
+
 
 
 
@@ -793,29 +826,35 @@ function App() {
               </button>
             )}
           </div>
-                 <button 
-  onClick={() => navigate('/Cmande', { 
-    state: { 
-      productName: product.name, 
-      
-    }
-  })}
->
-  Ajouter une commande
-</button>
+    
                 
                 <button 
-        
-          onClick={() => addToCart({
-            id: product._id,
-            name: product.name,
-            price: product.promotion === 'oui' ? product.promotionprice : product.price,
-            image: product.imageUrl
-          })}
-          className="custom-cart-btn"
-        >
-          Ajouter au panier
-        </button>
+  onClick={() => {
+    // Vérifier si l'utilisateur est connecté en vérifiant les données dans le localStorage
+    const userData = localStorage.getItem('user');
+    
+    if (!userData) {
+      // Si l'utilisateur n'est pas connecté, afficher une alerte et rediriger vers la page de connexion
+      alert('Veuillez vous connecter pour ajouter des articles au panier');
+      window.location.href = '/login'; // Remplacez '/login' par votre route de connexion
+      return;
+    }
+    
+    // Si l'utilisateur est connecté, ajouter l'article au panier
+    addToCart({
+      id: product._id,
+      name: product.name,
+      price: product.promotion === 'oui' ? product.promotionprice : product.price,
+      image: product.imageUrl
+    });
+  }}
+  className="custom-cart-btn"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style={{marginRight: '8px'}}>
+    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </svg>
+  Ajouter au panier
+</button>
             </div>
         </div>
     ))}

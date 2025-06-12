@@ -4,7 +4,11 @@ import { Link } from 'react-router-dom';
 import Getcomandlist from './Getcomandlist'
 import GetProduit from './GetProduit'
 import Userlist from './Userlist'
+
+import { useNavigate } from 'react-router-dom';
 function UserManagement() {
+
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -98,6 +102,13 @@ function UserManagement() {
     );
   }
 
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
   return (
     <div className="container mt-4">
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
@@ -106,6 +117,12 @@ function UserManagement() {
         <Link className="nav-link" to="/Userlist">Utilisateurs</Link>
         <Link className="nav-link" to="/GetProduit">Produits</Link>
         <Link className="nav-link" to="/Getcomandlist">Commandes</Link>
+        <button 
+  onClick={handleLogout}
+  className="btn btn-danger"
+>
+  Déconnexion
+</button>
       </div>
     </nav>
 
@@ -142,7 +159,7 @@ function UserManagement() {
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(user._id)}
                     >
-                      Supprimer
+                      🗑️ Supprimer
                     </button>
                   </td>
                 </tr>

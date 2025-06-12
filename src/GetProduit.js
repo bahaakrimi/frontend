@@ -406,13 +406,13 @@ const ProduitManager = () => {
           <div className="navbar-nav">
             <Link className="nav-link" to="/Userlist">Utilisateurs</Link>
             <Link className="nav-link" to="/GetProduit">Produits</Link>
-            <Link className="nav-link" to="/Getcomandlist">Commandes</Link>
+            <Link className="nav-link" to="/Getcommandadmin">Commandes</Link>
             <button 
-              onClick={handleLogout}
-              
-            >
-              Déconnexion
-            </button>
+  onClick={handleLogout}
+  className="btn btn-danger"
+>
+  Déconnexion
+</button>
           </div>
         </nav>
         
@@ -563,13 +563,13 @@ const ProduitManager = () => {
                       className="btn btn-warning"
                       onClick={() => handleEdit(produit)}
                     >
-                      Modifier
+                      ✏️ Modifier
                     </button>
                     <button 
                       className="btn btn-danger"
                       onClick={() => handleDelete(produit._id)}
                     >
-                      Supprimer
+                      🗑️ Supprimer
                     </button>
                   </div>
                 </div>

@@ -10,24 +10,41 @@ const LoginForm = () => {
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewAccount({...newAccount, [name]: value});
+    // Clear error when user starts typing
+    if (error) setError("");
   };
 
   const login2 = async () => {
+    // Basic validation
+    if (!newAccount.email || !newAccount.password) {
+      setError("Please enter both email and password");
+      return;
+    }
+
     try {
       const res = await login(newAccount);
       console.log("res", res);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       if(res.data.user.role === "client") {
-        navigate('/App');
-      } else {
-        navigate('/GetProduit');
-      }
+    navigate('/App');
+  } else if(res.data.user.role === "responsable") {
+    navigate('/Getcomandlist');
+  } else {
+    
+    navigate('/GetProduit'); 
+  }
     } catch (error) {
       console.error("Erreur de connexion :", error);
+      if (error.response && error.response.status === 401) {
+        setError("Invalid email or password");
+      } else {
+        setError("An error occurred during login. Please try again.");
+      }
     }
   };
 
@@ -125,11 +142,19 @@ const LoginForm = () => {
     marginBottom: '30px',
   };
 
+  const errorStyle = {
+    color: '#d9534f',
+    marginBottom: '15px',
+    fontSize: '14px',
+  };
+
   return (
     <div style={containerStyle}>
       <div style={brandStyle}></div>
       <div style={loginBoxStyle}>
         <div style={titleStyle}>Login</div>
+        
+        {error && <div style={errorStyle}>{error}</div>}
         
         <input
           type="email"
